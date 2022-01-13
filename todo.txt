@@ -1,0 +1,5 @@
+Fix geo calculations for circular and rectangular:
+    - Include whole bottom and sidewall sq footage
+    - Use print out info
+
+Make a start-over option for liner setup
