@@ -21,95 +21,25 @@ gui = GuiHelp()
 # Create Quote object
 quote = Quote()
 
-# Creates first window
+# Creates first window for liner setup
 exit_a = gui.create_first_window(quote)
 
+# Creates loop to allow for back button
 while not exit_a:
-
-    # For customizations
-    circular = False
-    rectangular = False
-    lifting_hem = False
-    additional_liner_cost = 0
-    number_liners = 1
-
-    # ---------------------------------------------------
 
     # Next page exit button
     exit_b = False
 
+    # Loop for back button
     while not exit_b:
 
-        # Circular tank configuration
-        if tank[0] == "c":
+        # Creates second window for liner customizations
+        exit_b = gui.create_second_window(quote)
 
-            # Get circular tank input from user
-            layout = [[sg.Text("Enter diameter of tank:")],
-                      [sg.InputText(enable_events=True, size=(5, 2), key="tank_dm_ft"), sg.Text("ft."),
-                       sg.InputText(enable_events=True, size=(3, 2), key="tank_dm_in"), sg.Text("in.")],
-                      [sg.Text(size=(40, 2))],
-                      [sg.Text("Enter depth of tank:")],
-                      [sg.InputText(enable_events=True, size=(5, 2), key="tank_dp_ft"), sg.Text("ft."),
-                       sg.InputText(enable_events=True, size=(3, 2), key="tank_dp_in"), sg.Text("in.")],
-                      [sg.Text("Please enter any extensions to depth:"),
-                       sg.InputText(enable_events=True, size=(3, 2), key="tank_dp_ex_in"), sg.Text("in.")],
-                      [sg.Text(size=(40, 2))],
-                      [sg.Button("Back", size=(6, 1)), sg.Text(size=(34, 2)), sg.Button("Next", size=(6, 1))]]
-            window = sg.Window("Quote Calculator", layout)
+        # Configures information from second window into customized liner order
+        quote.liner.configure()
 
-            # Capture values after next button is pushed
-            while True:
-                event, values = window.read()
-                if event == sg.WINDOW_CLOSED:
-                    exit_a = True
-                    exit_b = True
-                    break
-
-                if event == "Next":
-                    diameter_ft = float(values["tank_dm_ft"])
-                    diameter_inch = float(values["tank_dm_in"])
-                    depth_ft = float(values["tank_dp_ft"])
-                    depth_inch = float(values["tank_dm_in"])
-                    depth_extensions = float(values["tank_dp_ex_in"])
-                    break
-
-                if event == "Back":
-                    exit_b = True
-                    break
-
-            window.close()
-
-            # Check exit
-            if exit_b:
-                break
-
-            # Diameter configuration
-            diameter_tank = converter(diameter_ft, diameter_inch)
-            diameter_liner = diameter_modifier(diameter_tank)
-
-            # Depth configuration
-            depth_tank = converter(depth_ft, depth_inch)
-
-            # Extra depth extensions
-            depth_extensions = converter(0, depth_extensions)
-            depth_liner = depth_tank + depth_extensions
-
-            # Extensions
-            circumference_tank = diameter_tank * math.pi
-            circumference_liner = diameter_liner * math.pi
-            circular = True
-
-            # Calculate square footage
-            actual_square_footage = circular_tank_sq_footage(diameter_liner, depth_liner)
-            # Add the 5%
-            five_percent = actual_square_footage * 0.05
-            square_footage = round(actual_square_footage + five_percent)
-
-            # Calculate weight of liner
-            liner_weight = circular_weight(diameter_liner, depth_liner, weight_sqft)
-
-            # Cost of liner
-            liner_cost = square_footage * sqft_price
+        if True:
 
             # Setup for customization loop
             total_quote_cost = liner_cost
