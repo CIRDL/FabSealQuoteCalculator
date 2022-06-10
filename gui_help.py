@@ -66,7 +66,6 @@ class GuiHelp:
             event, values = setup_window.read()
             if event == sg.WINDOW_CLOSED:
                 return True
-
             if event == "Next":
                 tank = values["tank_type"].lower()
                 sq_price = float(values["square_foot_cost"])
@@ -102,7 +101,7 @@ class GuiHelp:
                   [sg.Text(size=(40, 2))],
                   [sg.Button("Back", size=(6, 1)), sg.Text(size=(34, 2)), sg.Button("Next", size=(6, 1))]]
 
-        # Create setup window
+        # Create window
         window = sg.Window("Quote Calculator", layout)
 
         # Event reader
@@ -137,8 +136,102 @@ class GuiHelp:
 
     # Creates rectangular configuration window
     def create_rectangular_configuration_window(self, quote):
-        pass
+        # Get rectangular tank input from user
+        layout = [[sg.Text("Enter length of tank:")],
+                  [sg.InputText(enable_events=True, size=(5, 2), key="tank_lgth_ft"), sg.Text("ft."),
+                   sg.InputText(enable_events=True, size=(3, 2), key="tank_lgth_in"), sg.Text("in.")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text("Enter width of tank:")],
+                  [sg.InputText(enable_events=True, size=(5, 2), key="tank_wdth_ft"), sg.Text("ft."),
+                   sg.InputText(enable_events=True, size=(3, 2), key="tank_wdth_in"), sg.Text("in.")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text("Enter depth of tank:")],
+                  [sg.InputText(enable_events=True, size=(5, 2), key="tank_dp_ft"), sg.Text("ft."),
+                   sg.InputText(enable_events=True, size=(3, 2), key="tank_dp_in"), sg.Text("in.")],
+                  [sg.Text("Please enter any extensions to depth:"),
+                   sg.InputText(enable_events=True, size=(3, 2), key="tank_dp_ex_in"), sg.Text("in.")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(6, 1)), sg.Text(size=(34, 2)), sg.Button("Next", size=(6, 1))]]
+
+        # Create window
+        window = sg.Window("Quote Calculator", layout)
+
+        # Event reader
+        exit_b = self.rectangular_config_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false otherwise
+        return exit_b
+
+    @staticmethod
+    # Rectangular configuration event reader
+    def rectangular_config_event_reader(window, quote):
+        # Capture values after next button is pushed
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                return True
+
+            if event == "Next":
+                length_ft = float(values["tank_lgth_ft"])
+                length_inch = float(values["tank_lgth_in"])
+                width_ft = float(values["tank_wdth_ft"])
+                width_inch = float(values["tank_wdth_in"])
+                depth_ft = float(values["tank_dp_ft"])
+                depth_inch = float(values["tank_dp_in"])
+                depth_extensions = float(values["tank_dp_ex_in"])
+                quote.liner.info.configure(length_ft, length_inch, width_ft, width_inch, depth_ft
+                                           , depth_inch, depth_extensions)
+                return False
+
+            if event == "Back":
+                return True
 
     # Creates flat sheet configuration window
     def create_flat_sheet_configuration_window(self, quote):
-        pass
+        # Get flat sheet input from user
+        layout = [[sg.Text("Enter length of liner:")],
+                  [sg.InputText(enable_events=True, size=(5, 2), key="tank_lgth_ft"), sg.Text("ft."),
+                   sg.InputText(enable_events=True, size=(3, 2), key="tank_lgth_in"), sg.Text("in.")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text("Enter width of liner:")],
+                  [sg.InputText(enable_events=True, size=(5, 2), key="tank_wdth_ft"), sg.Text("ft."),
+                   sg.InputText(enable_events=True, size=(3, 2), key="tank_wdth_in"), sg.Text("in.")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(6, 1)), sg.Text(size=(34, 2)), sg.Button("Next", size=(6, 1))]]
+
+        # Create window
+        window = sg.Window("Quote Calculator", layout)
+
+        # Event reader
+        exit_b = self.flat_sheet_config_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false otherwise
+        return exit_b
+
+    @staticmethod
+    # Event reader
+    def flat_sheet_config_event_reader(window, quote):
+        # Capture values after next button is pushed
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                return True
+
+            if event == "Next":
+                length_ft = float(values["tank_lgth_ft"])
+                length_inch = float(values["tank_lgth_in"])
+                width_ft = float(values["tank_wdth_ft"])
+                width_inch = float(values["tank_wdth_in"])
+                quote.liner.info.configure(length_ft, length_inch, width_ft, width_inch)
+                return False
+
+            if event == "Back":
+                return True
+
