@@ -1,16 +1,9 @@
-class Quote:
+from abc import ABC, abstractmethod
 
 
+class Liner:
+    def __init__(self, tank, price, weight):
+        self.tank_type = tank
+        self.sqft_price = price
+        self.sqft_weight = weight
 
-    def __init__(self, tank, sqft_price, weight_sqft):
-        self.tank = tank
-        self.sqft_price = sqft_price
-        self.weight_sqft = weight_sqft
-        # For customizations
-        self.circular = False
-        self.rectangular = False
-        self.lifting_hem = False
-        self.additional_liner_cost = 0
-        self.number_liners = 1
-
-    def ()

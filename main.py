@@ -297,7 +297,7 @@ print("Weight of single liner: {:,} lbs".format(liner_weight))
 # Setup for customization loop
 total_quote_cost = liner_cost
 total_mobilization_cost = 0
-lining_system_cost = liner_cost
+lining_system_cost = 0
 total_weight = liner_weight
 total_liners = 1
 order_list = []
@@ -389,7 +389,8 @@ while not satisfied:
                 geo_material_type = int(geo_material_type)
             total_geo_cost = geo_cost_circular(geo_material_type, wall_circular_tank_sq_footage
             (diameter_liner, depth_liner), floor_circular_tank_sq_footage(diameter_liner))
-            total_geo_weight = geo_weight_circular(geo_material_type, diameter_tank, depth_tank)
+            total_geo_weight = geo_weight_circular(geo_material_type, wall_circular_tank_sq_footage(diameter_liner, depth_liner),
+                                                   floor_circular_tank_sq_footage(diameter_liner))
 
             # Quote documentation
             lining_system_cost += total_geo_cost
@@ -424,7 +425,7 @@ while not satisfied:
         order_list.append("geo")
 
         # Prints out important final info
-        print("Total weight: {:,} lbs.".format(total_weight))
+        print("Total weight: {:,} lbs.".format(round(total_weight)))
         print("Total quote cost: ${:,.2f}\n".format(total_quote_cost))
 
     # Batten strip
@@ -446,7 +447,7 @@ while not satisfied:
             batten_strip_cost = 10.0
             batten_strip_type = "poly-pro"
         else:
-            batten_strip_cost = 25.86
+            batten_strip_cost = 33.30
             batten_strip_type = "stainless steel"
 
         # Figure out type of tank
@@ -481,11 +482,11 @@ while not satisfied:
 
         # Circular calculation for number of j-bolts
         if circular:
-            jbolt_num = math.ceil(circumference_tank / 1.5)
+            jbolt_num = math.ceil(circumference_liner / 1.5)
 
         # Rectangular calculation for number of j-bolts
         else:
-            jbolt_num = math.ceil(perimeter_tank / 1.5)
+            jbolt_num = math.ceil(perimeter_liner / 1.5)
 
         # Calculates total cost of j-bolts
         total_jbolt_cost = jbolt_cost * jbolt_num
@@ -618,11 +619,11 @@ while not satisfied:
 
         # Price calculation for circular
         if circular and not rectangular:
-            total_leak_detection_cost = circumference_tank * leak_detection_price
+            total_leak_detection_cost = circumference_liner * leak_detection_price
 
         # Price calculation for rectangular
         else:
-            total_leak_detection_cost = perimeter_tank * leak_detection_price
+            total_leak_detection_cost = perimeter_liner * leak_detection_price
 
         # Calculate total cost
         total_quote_cost += total_leak_detection_cost
@@ -815,12 +816,8 @@ while not satisfied:
         # Keep track of order
         order_list.append("lifting hem")
 
-        # Quote documentation
-        lining_system_cost += lifting_hem_cost
-
         # Print out final info
-        print("\nCost of lifting hem added: ${:,.2f}".format(lifting_hem_cost))
-        print("Total quote cost: ${:,.2f}\n".format(total_quote_cost))
+        print("\nCost of lifting hem added: ${:,.2f}\n".format(lifting_hem_cost))
 
     # Boots
     elif command[0] == 'b' and command[1] == 'o':
@@ -1043,7 +1040,7 @@ while not satisfied:
         if number_liners > 1:
             original_liners_cost = total_liners * liner_cost
         else:
-            original_liners_cost = liner_cost
+            original_liners_cost = liner_costc
 
         total_quote_cost -= original_liners_cost
 
@@ -1055,10 +1052,6 @@ while not satisfied:
             new_liners_cost = discounted_liner_cost
 
         total_quote_cost += new_liners_cost
-
-        # Quote documentation
-        lining_system_cost -= original_liners_cost
-        lining_system_cost += new_liners_cost
 
         # Prints out new info
         print("\nCost of new liner with " + str(discount_amount_percentage) +
@@ -1415,9 +1408,10 @@ calculations_feet.paragraph_format.line_spacing_rule = WD_LINE_SPACING.DOUBLE
 # Extensions subsection of LINING SYSTEM
 
 # Prints out liner cost (not modified)
+single_liner_cost = square_footage * sqft_price
 extensions_cost = quote.add_paragraph("\nLiner cost:                                            "
                                         "                                                        "
-                                        "${:,.2f}".format(liner_cost))
+                                        "${:,.2f}".format(single_liner_cost))
 
 # Prints out discount if there is one
 if discounted:
@@ -1444,7 +1438,7 @@ if total_liners > 1:
     else:
         extensions_cost.add_run("\nTotal cost of (" + str(total_liners) + ") liners:                            "
                                 "                                               "
-                                "${:,.2f}".format(additional_liner_cost + liner_cost))
+                                    "${:,.2f}".format(single_liner_cost * total_liners))
 
 # Check to see if customizations were ordered
 if len(order_list) > 0:
@@ -1526,6 +1520,10 @@ if len(order_list) > 0:
                                     "                                     ${:,.2f}".format(total_leak_detection_cost))
 
 # Price of one lining system
+if discounted:
+    lining_system_cost += (new_liners_cost / number_liners)
+else:
+    lining_system_cost += single_liner_cost
 lining_system_underline = extensions_cost.add_run("\nTotal cost for one (1) lining system:                                                  "
                         "${:,.2f}".format(lining_system_cost))
 

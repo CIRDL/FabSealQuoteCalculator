@@ -1,14 +1,15 @@
 import math
 
 
+# 16oz = $0.72 and 8oz = $0.49
 def geo_cost_circular(wall_material_type, sidewall_sqft, bottom_sqft):
 
     if wall_material_type == 16:
-        wall_material_cost = 0.72
+        wall_material_cost = 0.59
     else:
-        wall_material_cost = 0.49
+        wall_material_cost = 0.45
 
-    floor_material_cost = 0.72
+    floor_material_cost = 0.59
     #
     # # Sidewall square footage
     # circumference = diameter * math.pi
@@ -22,7 +23,7 @@ def geo_cost_circular(wall_material_type, sidewall_sqft, bottom_sqft):
     return total_cost
 
 
-def geo_weight_circular(wall_material_type, diameter, depth):
+def geo_weight_circular(wall_material_type, sidewall_sqft, bottom_sqft):
 
     if wall_material_type == 16:
         wall_material_weight = 0.10
@@ -31,15 +32,8 @@ def geo_weight_circular(wall_material_type, diameter, depth):
 
     floor_material_weight = 0.10
 
-    # Sidewall square footage
-    circumference = diameter * math.pi
-    sidewall_sqft = round(circumference * depth)
-
-    # Bottom square footage
-    bottom_sqft = round(diameter ** 2)
-
     # Calculate weight
-    total_weight = (wall_material_weight + sidewall_sqft) + (floor_material_weight * bottom_sqft)
+    total_weight = (wall_material_weight * sidewall_sqft) + (floor_material_weight * bottom_sqft)
     return math.ceil(total_weight)
 
 

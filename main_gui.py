@@ -14,7 +14,7 @@ from datetime import date
 from num2words import num2words
 import PySimpleGUI as sg
 from gui_help import *
-from quote import Quote
+
 
 # Exit & back button
 exit_a = False
@@ -27,7 +27,7 @@ while not exit_a:
     # Set the layout for main info page
     layout = [[sg.Text("Choose the type of tank:")],
               [sg.InputCombo(("Circular", "Rectangular", "Flat Sheet"), size=(40, 1), enable_events=True,
-                             key="tank_type")],
+                                key="tank_type")],
               [sg.Text(size=(40, 2))],
               [sg.Text("Enter price per square foot:")],
               [sg.Text("$"), sg.InputText(enable_events=True, key="square_foot_cost")],
@@ -40,7 +40,6 @@ while not exit_a:
     # Create setup window
     setup_window = sg.Window("Quote Calculator", layout)
 
-    #
     while True:
         event, values = setup_window.read()
         if event == sg.WINDOW_CLOSED:
@@ -72,8 +71,6 @@ while not exit_a:
     exit_b = False
 
     while not exit_b:
-
-
 
         # Circular tank configuration
         if tank[0] == "c":
@@ -167,6 +164,9 @@ while not exit_a:
             # Next page exit button
             exit_c = False
 
+            # For dashboard
+            dashboard = ""
+
             while not exit_c:
 
                 # Set the layout for customization loop
@@ -174,14 +174,16 @@ while not exit_a:
                           [sg.InputCombo(customizations_available, size=(40, 1), enable_events=True,
                                          key="customizations")],
                           [sg.Text(size=(40, 2))],
-                          [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))],
-                          [sg.Text(size=(40, 2))],
+                          [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))]]
+                for order in order_list:
+                    layout += [sg.Text(size=(24, 2)), sg.Text(order, size=(10, 3))]
+                layout += [[sg.Text(size=(40, 2))],
                           [sg.Text(size=(40, 2))],
                           [sg.Button("Back", size=(6, 1)), sg.Text(size=(39, 1)), sg.Button("Choose", size=(6, 1))],
                           [sg.Text(size=(23, 1)), sg.Button("Finish", size=(6, 1))]]
 
                 # Create setup window
-                setup_window = sg.Window("Quote Calculator", layout)
+                setup_window = sg.Window("Quote Customizations", layout)
 
                 while True:
                     event, values = setup_window.read()
@@ -211,25 +213,51 @@ while not exit_a:
                 if exit_c:
                     break
 
-            # Create specified gui for requested customization
+                # -------------------------------------------------
 
-            def geo_gui():
+                # Next page exit button
+                exit_d = False
 
-                # Set the layout for geo customization
+                while not exit_d:
 
-                geo_satisfied = false
+                    if customization[0] == "g" and customization[1] == "e":
+                        # Set the layout for geo customization
+                        layout = [[sg.Text("Enter thickness in ounces: ")],
+                                  [sg.InputCombo(("8", "16"), enable_events=True, size=(3, 2), key="geo_size"), sg.Text
+                                  ("oz.")],
+                                  [sg.Text(size=(40, 2))],
+                                  [sg.Text(size=(40, 2))],
+                                  [sg.Text(size=(40, 2))],
+                                  [sg.Text(size=(40, 2))],
+                                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
 
-                layout = [[sg.Text("Choose a customization below:")],
-                          [sg.InputCombo(customizations_available, size=(40, 1), enable_events=True,
-                                         key="customizations")],
-                          [sg.Text(size=(40, 2))],
-                          [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))],
-                          [sg.Text(size=(40, 2))],
-                          [sg.Text(size=(40, 2))],
-                          [sg.Button("Back", size=(6, 1)), sg.Text(size=(39, 1)), sg.Button("Choose", size=(6, 1))],
-                          [sg.Text(size=(23, 1)), sg.Button("Finish", size=(6, 1))]]
+                        window = sg.Window("Quote Customizations", layout)
 
-                # Update quote order
+                        while True:
+                            event, values = window.read()
+                            if event == sg.WINDOW_CLOSED:
+                                break
+
+                            if event == "Add":
+                                geo_material_type = int(values["geo_size"])
+
+                            if event == "Back":
+                                exit_c = False
+                                exit_d = True
+                                break
+
+                        window.close()
+
+                        total_geo_cost = geo_cost_circular(geo_material_type, wall_circular_tank_sq_footage
+                        (diameter_liner, depth_liner), floor_circular_tank_sq_footage(diameter_liner))
+                        total_geo_weight = geo_weight_circular(geo_material_type, diameter_tank, depth_tank)
+
+                        # Quote documentation
+                        lining_system_cost += total_geo_cost
+
+                        # Calculates total costs and weights
+                        total_quote_cost += total_geo_cost
+                        total_weight += total_geo_weight
 
             # Update dashboard
 

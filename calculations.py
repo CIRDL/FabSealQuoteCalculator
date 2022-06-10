@@ -88,14 +88,17 @@ def rectangular_weight(length, width, depth, material_weight):
 # Adds appropriate number of extra length to diameter
 def diameter_modifier(diameter):
 
-    if diameter < 16:
+    if diameter < 15:
         diameter += converter(0, 3)
 
-    elif diameter < 31:
+    elif diameter < 30:
         diameter += converter(0, 6)
 
-    else:
+    elif diameter < 100:
         diameter += 1
+
+    else:
+        diameter += converter(1, 6)
 
     return diameter
 
