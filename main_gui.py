@@ -1,10 +1,11 @@
 # @author Cesar Ramirez
-# @program Fabseal Quote Calculator
+# @program FabsealQuoteCalculator
+# @version 2.0
 
 
-import math
 from calculations import *
 from accessories import *
+from gui_help import *
 from error import *
 import docx
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -12,51 +13,18 @@ from docx.enum.text import WD_LINE_SPACING
 from docx.enum.text import WD_UNDERLINE
 from datetime import date
 from num2words import num2words
-import PySimpleGUI as sg
-from gui_help import *
 
 
-# Exit & back button
-exit_a = False
+# Create GuiHelp object
+gui = GuiHelp()
+
+# Create Quote object
+quote = Quote()
+
+# Creates first window
+exit_a = gui.create_first_window(quote)
 
 while not exit_a:
-
-    # Theme color
-    sg.theme("dark grey 14")
-
-    # Set the layout for main info page
-    layout = [[sg.Text("Choose the type of tank:")],
-              [sg.InputCombo(("Circular", "Rectangular", "Flat Sheet"), size=(40, 1), enable_events=True,
-                                key="tank_type")],
-              [sg.Text(size=(40, 2))],
-              [sg.Text("Enter price per square foot:")],
-              [sg.Text("$"), sg.InputText(enable_events=True, key="square_foot_cost")],
-              [sg.Text(size=(40, 2))],
-              [sg.Text("Enter weight per square foot:")],
-              [sg.InputText(enable_events=True, key="square_foot_weight"), sg.Text("lbs.")],
-              [sg.Text(size=(40, 2))],
-              [sg.Text(size=(40, 1)), sg.Button("Next", size=(6, 1))]]
-
-    # Create setup window
-    setup_window = sg.Window("Quote Calculator", layout)
-
-    while True:
-        event, values = setup_window.read()
-        if event == sg.WINDOW_CLOSED:
-            exit_a = True
-            break
-
-        if event == "Next":
-            tank = values["tank_type"].lower()
-            sqft_price = float(values["square_foot_cost"])
-            weight_sqft = float(values["square_foot_weight"])
-            break
-
-    setup_window.close()
-
-    # Check exit
-    if exit_a:
-        break
 
     # For customizations
     circular = False
