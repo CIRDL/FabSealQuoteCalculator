@@ -1,5 +1,31 @@
-Fix geo calculations for circular and rectangular:
-    - Include whole bottom and sidewall sq footage
-    - Use print out info
+import PySimpleGUI as sg
 
-Make a start-over option for liner setup
+
+sg.theme("dark grey 14")
+
+layout = [[sg.Text("Enter thickness in ounces: ")],
+          [sg.InputCombo(("8", "16"), enable_events=True, size=(3, 2), key="geo_size"), sg.Text("oz.")],
+          [sg.Text(size=(40, 2))],
+          [sg.Text(size=(40, 2))],
+          [sg.Text(size=(40, 2))],
+          [sg.Text(size=(40, 2))],
+          [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+window = sg.Window("Quote Calculator", layout)
+
+while True:
+    event, values = window.read()
+    if event == sg.WINDOW_CLOSED:
+        break
+
+    if event == "Add":
+        geo_material_type = int(values["geo_size"])
+
+window.close()
+
+total_geo_cost = geo_cost_circular(geo_material_type, wall_circular_tank_sq_footage
+(diameter_liner, depth_liner), floor_circular_tank_sq_footage(diameter_liner))
+total_geo_weight = geo_weight_circular(geo_material_type, diameter_tank, depth_tank)
+
+# Quote documentation
+lining_system_cost += total_geo_cost
