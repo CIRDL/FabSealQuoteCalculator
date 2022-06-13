@@ -70,6 +70,50 @@ class Geo:
         return self.layers * self.weight
 
 
+# Batten Strip class
+class BattenStrips:
+    def __init__(self, batten_strip_type, area):
+        self.type = self.__configure_type(batten_strip_type.lower())
+        self.batten_strip_cost = self.__calculate_cost()
+        self.cost = self.__configure_cost(area)
+
+    @staticmethod
+    # Assigns type of batten strip
+    def __configure_type(type):
+        if type[0] == 'p':
+            return "poly-pro"
+        else:
+            return "stainless steel"
+
+    # Calculates cost per batten strip based off type
+    def __calculate_cost(self):
+        if self.type[0] == 'p':
+            return 10.0
+        else:
+            return 33.30
+
+    # Calculates batten strip cost
+    def __configure_cost(self, area):
+        return round(area * self.batten_strip_cost, 2)
+
+
+# JBolt class
+class JBolts:
+    def __init__(self, area):
+        self.jbolt_cost = 9.5
+        self.jbolt_number = self.__calculate_jbolt_number(area)
+        self.cost = self.__configure_cost()
+
+    @staticmethod
+    # Calculates number of jbolts
+    def __calculates_jbolt_number( area):
+        return math.ceil(area / 1.5)
+
+    # Configures cost for jbolts
+    def __configure_cost(self, area):
+        return self.jbolt_cost * self.jbolt_number
+
+
 # Lining System class
 class LiningSystem:
     def __init__(self):
