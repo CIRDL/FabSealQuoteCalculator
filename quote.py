@@ -114,6 +114,57 @@ class JBolts:
         return self.jbolt_cost * self.jbolt_number
 
 
+# Oarlocks class
+class Oarlocks:
+    def __init__(self, oarlocks_number):
+        self.oarlock_price = 9.00
+        self.oarlocks_number = oarlocks_number
+        self.oarlocks_cost = self.__configure_cost()
+
+    # Configures cost for oarlocks
+    def __configure_cost(self):
+        return self.oarlock_price * self.oarlocks_number
+
+
+# Crates class
+class Crate:
+    def __init__(self, size):
+        self.size = size.lower()
+        self.cost = self.__configure_cost()
+        self.weight = self.__configure_weight()
+
+    # Configures cost of crate
+    # Large or small sizes
+    def __configure_cost(self):
+        if self.size[0] == 'l':
+            return 650
+        elif self.size[0] == 's':
+            return 250
+        else:
+            return 0
+
+    # Configures weight of crate
+    # Large or small sizes
+    def __configure_weight(self):
+        if self.size[0] == "l":
+            return 510
+        elif self.size[0] == "s":
+            return 140
+        else:
+            return 0
+
+
+# Leak Detection class
+class LeakDetection:
+    def __init__(self, area):
+        self.price_per_unit = 10.00
+        self.cost = self.__configure_cost(area)
+
+    # Configures cost of leak detection
+    def __configure_cost(self, area):
+        return area * self.price_per_unit
+
+
 # Lining System class
 class LiningSystem:
     def __init__(self):
