@@ -278,8 +278,8 @@ class Boot:
             return 200
 
 
-# Sump class
-class Sump:
+# General material customization class
+class GeneralCustomization:
     def __init__(self, square_footage, square_footage_price):
         self.labor_cost = 250
         self.cost = self.__calculate_cost(square_footage, square_footage_price)
@@ -289,15 +289,28 @@ class Sump:
         return self.labor_cost + square_footage_price * square_footage
 
 
-# ManWay class
-class ManWay:
+# Sump class
+class Sump(GeneralCustomization):
     def __init__(self, square_footage, square_footage_price):
-        self.labor_cost = 250
-        self.cost = self.__calculate_cost(square_footage, square_footage_price)
+        super().__init__(square_footage, square_footage_price)
 
-    # Calculates cost of manway
-    def __calculate_cost(self, square_footage, square_footage_price):
-        return self.labor_cost + square_footage_price * square_footage
+
+# ManWay class
+class ManWay(GeneralCustomization):
+    def __init__(self, square_footage, square_footage_price):
+        super().__init__(square_footage, square_footage_price)
+
+
+# Center Pole class
+class CenterPole(GeneralCustomization):
+    def __init__(self, square_footage, square_footage_price):
+        super().__init__(square_footage, square_footage_price)
+
+
+# Column class
+class Column(GeneralCustomization):
+    def __init__(self, square_footage, square_footage_price):
+        super().__init__(square_footage, square_footage_price)
 
 
 # Lining System class
