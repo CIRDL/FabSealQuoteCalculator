@@ -11,7 +11,63 @@ class Quote:
 # Accessories class
 class Accessories:
     def __init__(self):
-        self.geo = 0
+        self.geo = Geo(0, 0, 0)
+
+
+# Geo class
+class Geo:
+    def __init__(self, wall_thickness, liner_bottom_square_footage, liner_wall_square_footage):
+        self.wall_sq_price = self.__calculate_wall_sq_price(wall_thickness)
+        self.floor_sq_price = 0.59
+        self.wall_sq_weight = self.__calculate_wall_sq_weight(wall_thickness)
+        self.floor_sq_weight = 0.10
+        self.bottom_square_footage = liner_bottom_square_footage
+        self.wall_square_footage = liner_wall_square_footage
+        self.layers = 1
+        self.cost = self.__calculate_cost()
+        self.weight = self.__calculate_weight()
+        self.total_cost = self.cost
+        self.total_weight = self.weight
+
+    @staticmethod
+    # Calculates cost of material
+    def __calculate_wall_sq_price(wall_thickness):
+        if wall_thickness == 16:
+            return 0.59
+        else:
+            return 0.45
+
+    @staticmethod
+    # Calculates weight of material
+    def __calculate_wall_sq_weight(wall_thickness):
+        if wall_thickness == 16:
+            return 0.10
+        else:
+            return 0.08
+
+    # Add layer to geo
+    def add_layer(self, added_layers):
+        self.layers += added_layers
+        self.set_total_cost()
+        self.set_total_weight()
+
+    # Calculate cost
+    def __calculate_cost(self):
+        return round((self.wall_square_footage * self.wall_sq_price) + (self.bottom_square_footage *
+                                                                        self.floor_sq_price), 2)
+
+    # Calculate weight
+    def __calculate_weight(self):
+        return round((self.wall_square_footage * self.wall_sq_weight) + (self.bottom_square_footage *
+                                                                         self.floor_sq_weight))
+
+    # Calculates total cost (in case of layers)
+    def set_total_cost(self):
+        return self.layers * self.cost
+
+    # Calculates total weight (in case of layers)
+    def set_total_weight(self):
+        return self.layers * self.weight
 
 
 # Lining System class
