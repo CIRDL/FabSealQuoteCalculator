@@ -70,17 +70,17 @@ class GuiHelp:
                 tank = values["tank_type"].lower()
                 sq_price = float(values["square_foot_cost"])
                 sq_weight = float(values["square_foot_weight"])
-                quote.liner = Liner(tank, sq_price, sq_weight)
+                quote.lining_system.liner = Liner(tank, sq_price, sq_weight)
                 return False
 
     # Creates second window (liner customizations)
     def create_second_window(self, quote):
         # Circular configuration
-        if isinstance(quote.liner.info, CLiner):
+        if isinstance(quote.lining_system.liner.info, CLiner):
             exit_b = self.create_circular_configuration_window(quote)
-        elif isinstance(quote.liner.info, RLiner):
+        elif isinstance(quote.lining_system.liner.info, RLiner):
             exit_b = self.create_rectangular_configuration_window(quote)
-        elif isinstance(quote.liner.info, FLiner):
+        elif isinstance(quote.lining_system.liner.info, FLiner):
             exit_b = self.create_flat_sheet_configuration_window(quote)
         else:
             exit_b = False
@@ -128,7 +128,8 @@ class GuiHelp:
                 depth_ft = float(values["tank_dp_ft"])
                 depth_inch = float(values["tank_dm_in"])
                 depth_extensions = float(values["tank_dp_ex_in"])
-                quote.liner.info.configure(diameter_ft, diameter_inch, depth_ft, depth_inch, depth_extensions)
+                quote.lining_system.liner.info.configure(diameter_ft, diameter_inch, depth_ft,
+                                                         depth_inch, depth_extensions)
                 return False
 
             if event == "Back":
@@ -182,7 +183,7 @@ class GuiHelp:
                 depth_ft = float(values["tank_dp_ft"])
                 depth_inch = float(values["tank_dp_in"])
                 depth_extensions = float(values["tank_dp_ex_in"])
-                quote.liner.info.configure(length_ft, length_inch, width_ft, width_inch, depth_ft
+                quote.lining_system.liner.info.configure(length_ft, length_inch, width_ft, width_inch, depth_ft
                                            , depth_inch, depth_extensions)
                 return False
 
@@ -229,9 +230,45 @@ class GuiHelp:
                 length_inch = float(values["tank_lgth_in"])
                 width_ft = float(values["tank_wdth_ft"])
                 width_inch = float(values["tank_wdth_in"])
-                quote.liner.info.configure(length_ft, length_inch, width_ft, width_inch)
+                quote.lining_system.liner.info.configure(length_ft, length_inch, width_ft, width_inch)
                 return False
 
             if event == "Back":
                 return True
 
+    # Creates third window (quote customizations)
+    def create_third_window(self, quote):
+        # Circular configuration
+        if isinstance(quote.lining_system.liner.info, CLiner):
+            exit_c = self.create_circular_customizations_window(quote)
+        elif isinstance(quote.lining_system.liner.info, RLiner):
+            exit_c = self.create_rectangular_customizations_window(quote)
+        elif isinstance(quote.lining_system.liner.info, FLiner):
+            exit_c = self.create_flat_sheet_customizations_window(quote)
+        else:
+            exit_c = False
+        return exit_c
+
+    # Creates circular customizations window
+    def create_circular_customizations_window(self, quote):
+        # Customizations available for circular liner
+        customizations_available = ["Geo", "Batten Strips", "J-bolts", "Oarlocks",
+                                    "Crate(s)", "Leak Detection", "Nailing Strip", "Stainless Clips",
+                                    "Lifting Hem", "Installation", "Boots", "Sumps", "Manways",
+                                    "Center poles", "Columns", "Add liner(s)", "Discount liner"]
+        # Set the layout for customization loop
+        layout = [[sg.Text("Choose a customization below:")],
+                  [sg.InputCombo(customizations_available, size=(40, 1), enable_events=True,
+                                 key="customizations")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))]]
+        order_list = []
+        for order in order_list:
+            layout.append(sg.Text(size=(24, 2)), sg.Text(order, size=(10, 3)))
+        layout.append([[sg.Text(size=(40, 2))],
+                   [sg.Text(size=(40, 2))],
+                   [sg.Button("Back", size=(6, 1)), sg.Text(size=(39, 1)), sg.Button("Choose", size=(6, 1))],
+                   [sg.Text(size=(23, 1)), sg.Button("Finish", size=(6, 1))]])
+
+        # Create setup window
+        setup_window = sg.Window("Quote Customizations", layout)

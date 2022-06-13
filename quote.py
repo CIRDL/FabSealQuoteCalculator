@@ -4,20 +4,88 @@ from liner_toolkit import *
 # Quote class that contains whole order
 class Quote:
     def __init__(self):
+        self.lining_system = LiningSystem()
+        self.accessories = Accessories()
+
+
+# Accessories class
+class Accessories:
+    def __init__(self):
+        self.geo = 0
+
+
+# Lining System class
+class LiningSystem:
+    def __init__(self):
         self.liner = Liner("empty", 0, 0)
+        # In case of a discount
+        self.liner_cost = 0
+        # In case of a discount
+        self.discount_percentage = 0
+        self.total_liners = 1
+        self.weight = 0
+        self.cost = 0
+
+    # Sets price of lifting hem
+    def set_lifting_hem(self):
+        self.liner.set_lifting_hem()
+        self.set_weight()
+        self.set_cost()
+
+    # Discount liner
+    def discount_liner(self, discount_percentage):
+        # Record for documentation
+        self.discount_percentage = discount_percentage
+        # Gets real discount number
+        discount_number = discount_percentage / 100
+
+        # Records new single liner cost
+        self.liner_cost = self.liner.total_cost - (discount_number * self.liner.total_cost)
+        self.set_weight()
+        self.set_cost()
+
+    # Add liners
+    def add_liners(self, added_liners):
+        self.total_liners += added_liners
+        self.set_weight()
+        self.set_cost()
+
+    # Calculates cost of liner (depending on discount)
+    def get_liner_cost(self):
+        if self.discount_percentage == 0:
+            return self.liner.total_cost
+        else:
+            return self.liner_cost
+
+    # Sets lining system weight
+    def set_weight(self):
+        self.weight = self.liner.total_weight * self.total_liners
+
+    # Sets lining system cost
+    def set_cost(self):
+        self.cost = self.get_liner_cost() * self.total_liners
 
 
-# Liner class for encapsulation of order
+# Liner class for that encapsulates all shapes of liners
 class Liner:
     def __init__(self, tank, price, weight):
         self.sq_price = price
         self.sq_weight = weight
         self.info = self.__create_liner(tank.lower())
+        self.lifting_hem_area = 0
         self.tank_square_footage = 0
         self.five_percent = 0
         self.liner_square_footage = 0
         self.weight = 0
         self.cost = 0
+        # Including lifting hem
+        self.total_five_percent = 0
+        # Including lifting hem
+        self.total_liner_square_footage = 0
+        # Including lifting hem
+        self.total_cost = 0
+        # Including lifting hem
+        self.total_weight = 0
 
     # Updates liner configurations
     def configure(self):
@@ -26,18 +94,30 @@ class Liner:
         self.liner_square_footage = self.info.liner_square_footage
         self.weight = self.__calculate_liner_weight()
         self.cost = self.__calculate_liner_cost()
+        # Lifting hem
+        self.total_five_percent = self.five_percent
+        # Lifting hem
+        self.total_liner_square_footage = self.liner_square_footage
+        # Lifting hem
+        self.total_cost = self.cost
+        # Lifting hem
+        self.total_weight = self.weight
 
-    # TODO - Remove me
-    def print(self):
-        print(f"Cost: {self.cost}, Weight: {self.weight}, Square footage: {self.liner_square_footage}")
+    # Sets lifting hem for liner
+    def set_lifting_hem(self):
+        self.lifting_hem_area = self.__get_lifting_hem_area()
+        self.total_liner_square_footage += self.lifting_hem_area
+        self.total_five_percent = self.total_liner_square_footage * 0.05
+        self.total_cost = self.__calculate_liner_cost()
+        self.total_weight = self.__calculate_liner_weight()
 
     # Calculates weight of liner
     def __calculate_liner_weight(self):
-        return round(self.sq_weight * self.liner_square_footage)
+        return round(self.sq_weight * (self.liner_square_footage + self.lifting_hem_area))
 
     # Calculates cost of liner
     def __calculate_liner_cost(self):
-        return round(self.sq_price * self.liner_square_footage, 2)
+        return round(self.sq_price * (self.liner_square_footage + self.lifting_hem_area), 2)
 
     @staticmethod
     # Creates specific liner
@@ -48,6 +128,15 @@ class Liner:
             return FLiner()
         elif tank[0] == 'r':
             return RLiner()
+        else:
+            return 0
+
+    # Calculates lifting hem area depending on liner type
+    def __get_lifting_hem_area(self):
+        if isinstance(self.info, CLiner):
+            return self.info.circumference_liner
+        elif isinstance(self.info, RLiner):
+            return self.info.perimeter_liner
         else:
             return 0
 

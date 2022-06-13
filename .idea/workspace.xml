@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="cc451a9e-e11c-4942-b25e-e603d8683875" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui_help.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui_help.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quote.py" beforeDir="false" afterPath="$PROJECT_DIR$/quote.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +59,7 @@
       <recent name="C:\Users\cesar\PycharmProjects\LinerCalculator" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main_gui">
+  <component name="RunManager" selected="Python.main">
     <configuration name="calculator_setup" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="LinerCalculator" />
       <option name="INTERPRETER_OPTIONS" value="" />

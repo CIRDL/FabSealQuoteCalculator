@@ -21,11 +21,14 @@ gui = GuiHelp()
 # Create Quote object
 quote = Quote()
 
-# Creates first window for liner setup
-exit_a = gui.create_first_window(quote)
+# Page exit button
+exit_a = False
 
 # Creates loop to allow for back button
 while not exit_a:
+
+    # Creates first window for liner setup
+    exit_a = gui.create_first_window(quote)
 
     # Next page exit button
     exit_b = False
@@ -37,9 +40,19 @@ while not exit_a:
         exit_b = gui.create_second_window(quote)
 
         # Configures information from second window into customized liner order
-        quote.liner.configure()
+        quote.lining_system.liner.configure()
 
-        quote.liner.print()
+        # Next page exit button
+        exit_c = False
+
+        # Loop for back button
+        while not exit_c:
+
+            # Creates third window for quote customizations
+            exit_c = gui.create_third_window(quote)
+
+            # quote.configure()
+
 
         # circular path
         if tank[0] == "c":
