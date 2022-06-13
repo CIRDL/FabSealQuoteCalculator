@@ -271,4 +271,29 @@ class GuiHelp:
                    [sg.Text(size=(23, 1)), sg.Button("Finish", size=(6, 1))]])
 
         # Create setup window
-        setup_window = sg.Window("Quote Customizations", layout)
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_c = self.circular_customizations_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false otherwise
+        return exit_c
+
+    @staticmethod
+    # Event reader
+    def circular_customizations_event_reader(window, quote):
+        # Capture values after next button is pushed
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                return True
+            # Fill in for customizations
+            if event == "Next":
+
+                return False
+
+            if event == "Back":
+                return True
