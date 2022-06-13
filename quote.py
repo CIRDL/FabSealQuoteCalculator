@@ -262,6 +262,44 @@ class InstallationPackage:
         self.install_cost = install_cost
 
 
+# Boot class
+class Boot:
+    def __init__(self, size):
+        self.size = size
+        self.cost = self.__calculate_cost
+
+    # Calculates cost of boot
+    def __calculate_cost(self):
+        if 2.0 <= self.size <= 4.0:
+            return 125
+        elif 4.0 < self.size <= 8.0:
+            return 150
+        else:
+            return 200
+
+
+# Sump class
+class Sump:
+    def __init__(self, square_footage, square_footage_price):
+        self.labor_cost = 250
+        self.cost = self.__calculate_cost(square_footage, square_footage_price)
+
+    # Calculates cost of sump
+    def __calculate_cost(self, square_footage, square_footage_price):
+        return self.labor_cost + square_footage_price * square_footage
+
+
+# ManWay class
+class ManWay:
+    def __init__(self, square_footage, square_footage_price):
+        self.labor_cost = 250
+        self.cost = self.__calculate_cost(square_footage, square_footage_price)
+
+    # Calculates cost of manway
+    def __calculate_cost(self, square_footage, square_footage_price):
+        return self.labor_cost + square_footage_price * square_footage
+
+
 # Lining System class
 class LiningSystem:
     def __init__(self):
