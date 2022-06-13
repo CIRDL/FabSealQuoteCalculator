@@ -74,8 +74,8 @@ class Geo:
 class BattenStrips:
     def __init__(self, batten_strip_type, area):
         self.type = self.__configure_type(batten_strip_type.lower())
-        self.batten_strip_cost = self.__calculate_cost()
-        self.cost = self.__configure_cost(area)
+        self.price_per_unit = self.__calculate_price_per_unit()
+        self.cost = self.__calculate_cost(area)
 
     @staticmethod
     # Assigns type of batten strip
@@ -86,15 +86,15 @@ class BattenStrips:
             return "stainless steel"
 
     # Calculates cost per batten strip based off type
-    def __calculate_cost(self):
+    def __calculate_price_per_unit(self):
         if self.type[0] == 'p':
             return 10.0
         else:
             return 33.30
 
     # Calculates batten strip cost
-    def __configure_cost(self, area):
-        return round(area * self.batten_strip_cost, 2)
+    def ___calculate_cost(self, area):
+        return round(area * self.price_per_unit, 2)
 
 
 # JBolt class
@@ -102,7 +102,7 @@ class JBolts:
     def __init__(self, area):
         self.jbolt_cost = 9.5
         self.jbolt_number = self.__calculate_jbolt_number(area)
-        self.cost = self.__configure_cost()
+        self.cost = self.__calculate_cost()
 
     @staticmethod
     # Calculates number of jbolts
@@ -110,8 +110,8 @@ class JBolts:
         return math.ceil(area / 1.5)
 
     # Configures cost for jbolts
-    def __configure_cost(self, area):
-        return self.jbolt_cost * self.jbolt_number
+    def __calculate_cost(self, area):
+        return round(self.jbolt_cost * self.jbolt_number, 2)
 
 
 # Oarlocks class
@@ -119,33 +119,33 @@ class Oarlocks:
     def __init__(self, oarlocks_number):
         self.oarlock_price = 9.00
         self.oarlocks_number = oarlocks_number
-        self.oarlocks_cost = self.__configure_cost()
+        self.oarlocks_cost = self.__calculate_cost()
 
     # Configures cost for oarlocks
-    def __configure_cost(self):
-        return self.oarlock_price * self.oarlocks_number
+    def __calculate_cost(self):
+        return round(self.oarlock_price * self.oarlocks_number, 2)
 
 
 # Crates class
 class Crate:
     def __init__(self, size):
         self.size = size.lower()
-        self.cost = self.__configure_cost()
-        self.weight = self.__configure_weight()
+        self.cost = self.__calculate_cost()
+        self.weight = self.__calculate_weight()
 
     # Configures cost of crate
     # Large or small sizes
-    def __configure_cost(self):
+    def __calculate_cost(self):
         if self.size[0] == 'l':
             return 650
         elif self.size[0] == 's':
-            return 250
+            return 375
         else:
             return 0
 
     # Configures weight of crate
     # Large or small sizes
-    def __configure_weight(self):
+    def __calculate_weight(self):
         if self.size[0] == "l":
             return 510
         elif self.size[0] == "s":
@@ -158,11 +158,108 @@ class Crate:
 class LeakDetection:
     def __init__(self, area):
         self.price_per_unit = 10.00
-        self.cost = self.__configure_cost(area)
+        self.cost = self.__calculate_cost(area)
 
     # Configures cost of leak detection
-    def __configure_cost(self, area):
-        return area * self.price_per_unit
+    def __calculate_cost(self, area):
+        return round(area * self.price_per_unit, 2)
+
+
+# Nailing Strip class
+class NailingStrip:
+    def __init__(self, area):
+        self.price_per_unit = 1.00
+        self.cost = self.__calculate_cost(area)
+
+    # Configures cost of nailing strip
+    def __calculate_cost(self, area):
+        return round(area * self.price_per_unit, 2)
+
+
+# Stainless Clip class
+class StainlessClips:
+    def __init__(self, area):
+        self.price_per_unit = 6.00
+        self.cost = self.__calculate_cost(area)
+
+    # Configures cost of stainless clips
+    def __calculates_cost(self, area):
+        return math.ceil(self.price_per_unit * area)
+
+
+# Installation class
+class InstallationPackage:
+    def __init__(self, is_inside_usa, is_within_600_miles, traveling_cost, lining_system):
+        self.site_survey_cost = self.__calculate_site_survey_cost(is_inside_usa.lower(), is_within_600_miles.lower())
+        self.traveling_cost = traveling_cost
+        self.tools_and_hardware = lining_system.liner_cost * 0.1
+        self.total_tools_and_hardware = self.tools_and_hardware * lining_system.total_liners
+        self.install_cost = self.__calculate_install_cost(lining_system)
+        self.cost = self.__calculate_cost()
+
+    # Calculates total cost of installation package
+    def __calculate_cost(self):
+        return self.site_survey_cost + self.traveling_cost + self.total_tools_and_hardware + self.install_cost
+
+    @staticmethod
+    # Calculates site survey cost depending on location
+    def __calculate_site_survey_cost(is_inside_usa, is_within_600_miles):
+        if is_inside_usa[0] == "y":
+            if is_within_600_miles[0] == 'y':
+                return 1500
+            else:
+                return 2500
+        # Will have to update with information later in gui_help
+        else:
+            return 0
+
+    # Sets site survey cost (in case falls out of jurisdiction)
+    def set_site_survey_cost(self, site_survey_cost):
+        self.site_survey_cost = site_survey_cost
+
+    # Calculates install price depending on liner argument
+    def __calculate_install_cost(self, lining_system):
+        length = self.__calculate_length(lining_system)
+        employee_price = 750
+        if length < 30:
+            number_employees = 5
+            number_days = 3
+        elif length < 50:
+            number_employees = 5
+            number_days = 4
+        elif length < 70:
+            number_employees = 5
+            number_days = 5
+        elif length < 90:
+            number_employees = 5
+            number_days = 6
+        elif length < 110:
+            number_employees = 6
+            number_days = 6
+        elif length < 130:
+            number_employees = 6
+            number_days = 7
+        elif length < 150:
+            number_employees = 6
+            number_days = 8
+        else:
+            number_employees = 0
+            number_days = 0
+        return employee_price * number_employees * number_days
+
+    @staticmethod
+    # Calculates length used for install depending on tank shape
+    def __calculate_length(lining_system):
+        if isinstance(lining_system.liner.info, CLiner):
+            return lining_system.liner.info.diameter_liner
+        elif isinstance(lining_system.liner.info, RLiner):
+            return max(lining_system.liner.info.width_liner, lining_system.liner.info.length_liner)
+        else:
+            return 0
+
+    # Sets install cost in case of modification
+    def set_install_cost(self, install_cost):
+        self.install_cost = install_cost
 
 
 # Lining System class
