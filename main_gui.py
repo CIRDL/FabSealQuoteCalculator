@@ -3,8 +3,6 @@
 # @version 2.0
 
 
-from calculations import *
-from accessories import *
 from gui_help import *
 from error import *
 import docx

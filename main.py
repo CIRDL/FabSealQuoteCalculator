@@ -4,7 +4,7 @@
 
 import math
 from calculations import *
-from accessories import *
+from v1_accessories import *
 from error import *
 import docx
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
