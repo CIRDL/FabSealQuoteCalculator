@@ -7,4 +7,3 @@ class Quote:
         self.lining_system = LiningSystem()
         self.accessories = Accessories()
 
-

@@ -8,6 +8,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/accessories.py" beforeDir="false" afterPath="$PROJECT_DIR$/accessories.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui_help.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui_help.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/liner.py" beforeDir="false" afterPath="$PROJECT_DIR$/liner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quote.py" beforeDir="false" afterPath="$PROJECT_DIR$/quote.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,5 +228,16 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

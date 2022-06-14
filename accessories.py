@@ -11,8 +11,9 @@ class Accessories:
         self.weight = None
 
     # Add geo
-    def add_geo(self, wall_thickness, liner_bottom_square_footage, liner_wall_square_footage):
-        self.orders.append(Geo(wall_thickness, liner_bottom_square_footage, liner_wall_square_footage))
+    def add_geo(self, wall_thickness, quote):
+        self.orders.append(Geo(wall_thickness, quote.lining_system.liner.info.liner_bottom_square_footage(),
+                               quote.lining_system.liner.info.liner_wall_square_footage()))
         self.__update()
 
     # Add batten strips
@@ -103,6 +104,14 @@ class Accessories:
                 total_cost += order.cost
         return total_cost
 
+    # Deletes argument item if found
+    def delete(self, item):
+        for order in self.orders:
+            if isinstance(order, item):
+                self.orders.remove(order)
+                break
+        self.__update()
+
     # Sets cost of accessories
     def __set_cost(self):
         self.cost = 0
@@ -124,13 +133,13 @@ class Accessories:
 
 # Geo class
 class Geo:
-    def __init__(self, wall_thickness, liner_bottom_square_footage, liner_wall_square_footage):
+    def __init__(self, wall_thickness, bottom_square_footage, wall_square_footage):
         self.wall_sq_price = self.__calculate_wall_sq_price(wall_thickness)
         self.floor_sq_price = 0.59
         self.wall_sq_weight = self.__calculate_wall_sq_weight(wall_thickness)
         self.floor_sq_weight = 0.10
-        self.bottom_square_footage = liner_bottom_square_footage
-        self.wall_square_footage = liner_wall_square_footage
+        self.bottom_square_footage = bottom_square_footage
+        self.wall_square_footage = wall_square_footage
         self.cost = self.__calculate_cost()
         self.weight = self.__calculate_weight()
 
@@ -160,6 +169,10 @@ class Geo:
         return round((self.wall_square_footage * self.wall_sq_weight) + (self.bottom_square_footage *
                                                                          self.floor_sq_weight))
 
+    @staticmethod
+    def to_string():
+        return "Geo"
+
 
 # Batten Strip class
 class BattenStrips:
@@ -187,6 +200,10 @@ class BattenStrips:
     def ___calculate_cost(self, area):
         return round(area * self.price_per_unit, 2)
 
+    @staticmethod
+    def to_string():
+        return "Batten strips"
+
 
 # JBolt class
 class JBolts:
@@ -204,6 +221,10 @@ class JBolts:
     def __calculate_cost(self, area):
         return round(self.jbolt_cost * self.jbolt_number, 2)
 
+    @staticmethod
+    def to_string():
+        return "J-Bolts"
+
 
 # Oarlocks class
 class Oarlocks:
@@ -216,20 +237,24 @@ class Oarlocks:
     def __calculate_cost(self):
         return round(self.oarlock_price * self.oarlocks_number, 2)
 
+    @staticmethod
+    def to_string():
+        return "Oarlocks"
+
 
 # Crates class
 class Crate:
     def __init__(self, size):
-        self.size = size.lower()
+        self.size = size
         self.cost = self.__calculate_cost()
         self.weight = self.__calculate_weight()
 
     # Configures cost of crate
     # Large or small sizes
     def __calculate_cost(self):
-        if self.size[0] == 'l':
+        if self.size[0].lower() == 'l':
             return 650
-        elif self.size[0] == 's':
+        elif self.size[0].lower() == 's':
             return 375
         else:
             return 0
@@ -244,6 +269,9 @@ class Crate:
         else:
             return 0
 
+    def to_string(self):
+        return f"{self.size} Crate"
+
 
 # Leak Detection class
 class LeakDetection:
@@ -255,6 +283,10 @@ class LeakDetection:
     def __calculate_cost(self, area):
         return round(area * self.price_per_unit, 2)
 
+    @staticmethod
+    def to_string():
+        return "Leak Detection"
+
 
 # Nailing Strip class
 class NailingStrip:
@@ -265,6 +297,10 @@ class NailingStrip:
     # Configures cost of nailing strip
     def __calculate_cost(self, area):
         return round(area * self.price_per_unit, 2)
+    
+    @staticmethod
+    def to_string():
+        return "Nailing Strip"
 
 
 # Stainless Clip class
@@ -276,6 +312,10 @@ class StainlessClips:
     # Configures cost of stainless clips
     def __calculates_cost(self, area):
         return math.ceil(self.price_per_unit * area)
+
+    @staticmethod
+    def to_string():
+        return "Stainless Clips"
 
 
 # Installation class
@@ -352,6 +392,10 @@ class InstallationPackage:
     def set_install_cost(self, install_cost):
         self.install_cost = install_cost
 
+    @staticmethod
+    def to_string():
+        return "Installation Package"
+
 
 # Boot class
 class Boot:
@@ -367,6 +411,9 @@ class Boot:
             return 150
         else:
             return 200
+
+    def to_string(self):
+        return f"{self.size}\" Boot"
 
 
 # General material customization class
@@ -385,11 +432,19 @@ class Sump(GeneralCustomization):
     def __init__(self, square_footage, square_footage_price):
         super().__init__(square_footage, square_footage_price)
 
+    @staticmethod
+    def to_string():
+        return "Sump"
+
 
 # ManWay class
 class ManWay(GeneralCustomization):
     def __init__(self, square_footage, square_footage_price):
         super().__init__(square_footage, square_footage_price)
+
+    @staticmethod
+    def to_string():
+        return "Manway"
 
 
 # Center Pole class
@@ -397,60 +452,16 @@ class CenterPole(GeneralCustomization):
     def __init__(self, square_footage, square_footage_price):
         super().__init__(square_footage, square_footage_price)
 
+    @staticmethod
+    def to_string():
+        return "Center Pole"
+
 
 # Column class
 class Column(GeneralCustomization):
     def __init__(self, square_footage, square_footage_price):
         super().__init__(square_footage, square_footage_price)
 
-
-# Lining System class
-class LiningSystem:
-    def __init__(self):
-        self.liner = Liner("empty", 0, 0)
-        # In case of a discount
-        self.liner_cost = 0
-        # In case of a discount
-        self.discount_percentage = 0
-        self.total_liners = 1
-        self.weight = 0
-        self.cost = 0
-
-    # Sets price of lifting hem
-    def set_lifting_hem(self):
-        self.liner.set_lifting_hem()
-        self.set_weight()
-        self.set_cost()
-
-    # Discount liner
-    def discount_liner(self, discount_percentage):
-        # Record for documentation
-        self.discount_percentage = discount_percentage
-        # Gets real discount number
-        discount_number = discount_percentage / 100
-
-        # Records new single liner cost
-        self.liner_cost = self.liner.total_cost - (discount_number * self.liner.total_cost)
-        self.set_weight()
-        self.set_cost()
-
-    # Add liners
-    def add_liners(self, added_liners):
-        self.total_liners += added_liners
-        self.set_weight()
-        self.set_cost()
-
-    # Calculates cost of liner (depending on discount)
-    def get_liner_cost(self):
-        if self.discount_percentage == 0:
-            return self.liner.total_cost
-        else:
-            return self.liner_cost
-
-    # Sets lining system weight
-    def set_weight(self):
-        self.weight = self.liner.total_weight * self.total_liners
-
-    # Sets lining system cost
-    def set_cost(self):
-        self.cost = self.get_liner_cost() * self.total_liners
+    @staticmethod
+    def to_string():
+        return "Column"

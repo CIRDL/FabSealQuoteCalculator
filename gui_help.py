@@ -27,6 +27,7 @@ class GuiHelp:
     # Theme color
     def __init__(self):
         self.create_theme()
+        self.customization = None
 
     @staticmethod
     def create_theme():
@@ -40,10 +41,10 @@ class GuiHelp:
                                  key="tank_type")],
                   [sg.Text(size=(40, 2))],
                   [sg.Text("Enter price per square foot:")],
-                  [sg.Text("$"), sg.InputText(enable_events=True, key="square_foot_cost")],
+                  [sg.Text("$"), sg.InputText(enable_events=True, key="square_foot_cost", size=(10, 1))],
                   [sg.Text(size=(40, 2))],
                   [sg.Text("Enter weight per square foot:")],
-                  [sg.InputText(enable_events=True, key="square_foot_weight"), sg.Text("lbs.")],
+                  [sg.InputText(enable_events=True, key="square_foot_weight", size=(8, 1)), sg.Text("lbs.")],
                   [sg.Text(size=(40, 2))],
                   [sg.Text(size=(40, 1)), sg.Button("Next", size=(6, 1))]]
 
@@ -121,7 +122,6 @@ class GuiHelp:
             event, values = window.read()
             if event == sg.WINDOW_CLOSED:
                 return True
-
             if event == "Next":
                 diameter_ft = float(values["tank_dm_ft"])
                 diameter_inch = float(values["tank_dm_in"])
@@ -131,7 +131,6 @@ class GuiHelp:
                 quote.lining_system.liner.info.configure(diameter_ft, diameter_inch, depth_ft,
                                                          depth_inch, depth_extensions)
                 return False
-
             if event == "Back":
                 return True
 
@@ -174,7 +173,6 @@ class GuiHelp:
             event, values = window.read()
             if event == sg.WINDOW_CLOSED:
                 return True
-
             if event == "Next":
                 length_ft = float(values["tank_lgth_ft"])
                 length_inch = float(values["tank_lgth_in"])
@@ -186,7 +184,6 @@ class GuiHelp:
                 quote.lining_system.liner.info.configure(length_ft, length_inch, width_ft, width_inch, depth_ft
                                            , depth_inch, depth_extensions)
                 return False
-
             if event == "Back":
                 return True
 
@@ -224,7 +221,6 @@ class GuiHelp:
             event, values = window.read()
             if event == sg.WINDOW_CLOSED:
                 return True
-
             if event == "Next":
                 length_ft = float(values["tank_lgth_ft"])
                 length_inch = float(values["tank_lgth_in"])
@@ -232,7 +228,6 @@ class GuiHelp:
                 width_inch = float(values["tank_wdth_in"])
                 quote.lining_system.liner.info.configure(length_ft, length_inch, width_ft, width_inch)
                 return False
-
             if event == "Back":
                 return True
 
@@ -249,7 +244,71 @@ class GuiHelp:
             exit_c = False
         return exit_c
 
+    # Creates rectangular customizations window
+    def create_rectangular_customizations_window(self, quote):
+        # Customizations available for rectangular liner
+        customizations_available = ["Geo", "Batten Strips", "J-bolts", "Oarlocks",
+                                    "Crate(s)", "Leak Detection", "Nailing Strip", "Stainless Clips",
+                                    "Lifting Hem", "Installation", "Boots", "Sumps", "Manways",
+                                    "Center poles", "Columns", "Add liner(s)", "Discount liner"]
+
+        # Set the layout for customization loop
+        layout = [[sg.Text("Choose a customization below:")],
+                  [sg.InputCombo(customizations_available, size=(40, 1), enable_events=True,
+                                 key="customizations")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))]]
+        for order in quote.accessories.orders:
+            layout.append([[sg.Text(size=(24, 1)), sg.Text(order.to_string(), size=(10, 1))]])
+        layout.append([[sg.Text(size=(40, 2))],
+                   [sg.Text(size=(40, 2))],
+                   [sg.Button("Back", size=(6, 1)), sg.Text(size=(39, 1)), sg.Button("Choose", size=(6, 1))],
+                   [sg.Text(size=(22, 1)), sg.Button("Finish", size=(6, 1))]])
+
+        # Create setup window
+        window = sg.Window("Quote Calculator", layout)
+
+        # Event reader
+        exit_c = self.customizations_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false otherwise
+        return exit_c
+
+    # Creates rectangular customizations window
+    def create_flat_sheet_customizations_window(self, quote):
+        # Customizations available for flat sheet liner
+        customizations_available = ["Geo", "Add liner(s)", "Discount liner"]
+
+        # Set the layout for customization loop
+        layout = [[sg.Text("Choose a customization below:")],
+                  [sg.InputCombo(customizations_available, size=(40, 1), enable_events=True,
+                                 key="customizations")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))]]
+        for order in quote.accessories.orders:
+            layout.append([[sg.Text(size=(24, 1)), sg.Text(order.to_string(), size=(10, 1))]])
+        layout.append([[sg.Text(size=(40, 2))],
+                   [sg.Text(size=(40, 2))],
+                   [sg.Button("Back", size=(6, 1)), sg.Text(size=(39, 1)), sg.Button("Choose", size=(6, 1))],
+                   [sg.Text(size=(22, 1)), sg.Button("Finish", size=(6, 1))]])
+
+        # Create setup window
+        window = sg.Window("Quote Calculator", layout)
+
+        # Event reader
+        exit_c = self.customizations_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false otherwise
+        return exit_c
+
     # Creates circular customizations window
+    # TODO - finish customization windows
     def create_circular_customizations_window(self, quote):
         # Customizations available for circular liner
         customizations_available = ["Geo", "Batten Strips", "J-bolts", "Oarlocks",
@@ -262,20 +321,18 @@ class GuiHelp:
                                  key="customizations")],
                   [sg.Text(size=(40, 2))],
                   [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))]]
-        # TODO - Figure out how to display discount and additional liners
-        # TODO - make it possible to get rid of order
         for order in quote.accessories.orders:
-            layout.append(sg.Text(size=(24, 2)), sg.Text(order, size=(10, 3)))
+            layout.append([[sg.Text(size=(24, 1)), sg.Text(order.to_string(), size=(10, 1))]])
         layout.append([[sg.Text(size=(40, 2))],
                    [sg.Text(size=(40, 2))],
                    [sg.Button("Back", size=(6, 1)), sg.Text(size=(39, 1)), sg.Button("Choose", size=(6, 1))],
-                   [sg.Text(size=(23, 1)), sg.Button("Finish", size=(6, 1))]])
+                   [sg.Text(size=(22, 1)), sg.Button("Finish", size=(6, 1))]])
 
         # Create setup window
         window = sg.Window("Quote Customizations", layout)
 
         # Event reader
-        exit_c = self.circular_customizations_event_reader(window, quote)
+        exit_c = self.customizations_event_reader(window, quote)
 
         # Close window
         window.close()
@@ -283,21 +340,73 @@ class GuiHelp:
         # Return true if closed or back, false otherwise
         return exit_c
 
-    @staticmethod
     # Event reader
-    def circular_customizations_event_reader(window, quote):
+    def customizations_event_reader(self, window, quote):
         # Capture values after next button is pushed
         while True:
             event, values = window.read()
             if event == sg.WINDOW_CLOSED:
                 return True
-            # Fill in for customizations
             if event == "Choose":
-                print(values["customizations"])
+                self.customization = values["customizations"].lower()
+                return False
+            if event == "Back":
+                return True
+            if event == "Finish":
+                return True
+
+    # Updates dashboard of customizations window
+    def update(self, quote):
+        if isinstance(quote.lining_system.liner.info, CLiner):
+            return self.choose_circular_customization_window(quote)
+
+    # Creates fourth window for customization specification of circular tank
+    def choose_circular_customization_window(self, quote):
+        if self.customization == "geo":
+            exit_d = self.create_circular_geo_customization_window(quote)
+
+        return exit_d
+
+    # Circular geo customization window
+    def create_circular_geo_customization_window(self, quote):
+        # Set the layout for geo customization
+        layout = [[sg.Text("Enter thickness in ounces: ")],
+                  [sg.InputCombo(("8", "16"), enable_events=True, size=(3, 2), key="geo_size"), sg.Text
+                  ("oz.")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))],
+                  [sg.Text(size=(18, 1)), sg.Button("Delete", size=(6, 1)), sg.Text(size=(16, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.circular_geo_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    @staticmethod
+    # Event reader for geo customizations
+    def circular_geo_customization_event_reader(window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                return True
+
+            if event == "Add":
+                wall_thickness = int(values["geo_size"])
+                quote.accessories.add_geo(wall_thickness, quote)
                 return False
 
             if event == "Back":
                 return True
 
-            if event == "Finish":
-                return True
+            if event == "Delete":
+                quote.accessories.delete(Geo(0, 0, 0))
+                return False

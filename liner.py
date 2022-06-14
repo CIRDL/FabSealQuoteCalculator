@@ -1,6 +1,58 @@
 from liner_toolkit import *
 
 
+# Lining System class
+class LiningSystem:
+    def __init__(self):
+        self.liner = Liner("empty", 0, 0)
+        # In case of a discount
+        self.liner_cost = 0
+        # In case of a discount
+        self.discount_percentage = 0
+        self.total_liners = 1
+        self.weight = 0
+        self.cost = 0
+
+    # Sets price of lifting hem
+    def set_lifting_hem(self):
+        self.liner.set_lifting_hem()
+        self.set_weight()
+        self.set_cost()
+
+    # Discount liner
+    def discount_liner(self, discount_percentage):
+        # Record for documentation
+        self.discount_percentage = discount_percentage
+        # Gets real discount number
+        discount_number = discount_percentage / 100
+
+        # Records new single liner cost
+        self.liner_cost = self.liner.total_cost - (discount_number * self.liner.total_cost)
+        self.set_weight()
+        self.set_cost()
+
+    # Add liners
+    def add_liners(self, added_liners):
+        self.total_liners += added_liners
+        self.set_weight()
+        self.set_cost()
+
+    # Calculates cost of liner (depending on discount)
+    def get_liner_cost(self):
+        if self.discount_percentage == 0:
+            return self.liner.total_cost
+        else:
+            return self.liner_cost
+
+    # Sets lining system weight
+    def set_weight(self):
+        self.weight = self.liner.total_weight * self.total_liners
+
+    # Sets lining system cost
+    def set_cost(self):
+        self.cost = self.get_liner_cost() * self.total_liners
+
+
 # Liner class for that encapsulates all shapes of liners
 class Liner:
     def __init__(self, tank, price, weight):
@@ -75,6 +127,14 @@ class Liner:
         else:
             return 0
 
+    # Grabs bottom square footage
+    def bottom_liner_square_footage(self):
+        return self.info.liner_bottom_square_footage()
+
+    # Grabs wall square footage
+    def wall_liner_square_footage(self):
+        return self.info.liner_wall_square_footage()
+
 
 # Circular liner class
 class CLiner:
@@ -117,16 +177,16 @@ class CLiner:
         return round(self.liner_square_footage * scrap_cost, 2)
 
     # Calculates square footage of liner bottom
-    def __liner_bottom_square_footage(self):
+    def liner_bottom_square_footage(self):
         return self.diameter_liner ** 2
 
     # Calculates square footage of liner wall
-    def __liner_wall_square_footage(self):
+    def liner_wall_square_footage(self):
         return self.circumference_liner * self.depth_liner
 
     # Calculates square footage of liner
     def __set_liner_square_footage(self):
-        self.liner_square_footage = round(self.__liner_bottom_square_footage() + self.__liner_wall_square_footage())
+        self.liner_square_footage = round(self.liner_bottom_square_footage() + self.liner_wall_square_footage())
 
 
 # Rectangular liner class
@@ -174,16 +234,16 @@ class RLiner:
         return round(self.liner_square_footage * scrap_cost, 2)
 
     # Calculates square footage of liner bottom
-    def __liner_bottom_square_footage(self):
+    def liner_bottom_square_footage(self):
         return self.length_liner * self.width_liner
 
     # Calculates square footage of liner wall
-    def __liner_wall_square_footage(self):
+    def liner_wall_square_footage(self):
         return (self.length_liner + self.width_liner) * 2 * self.depth_liner
 
     # Calculates square footage of liner
     def __set_liner_square_footage(self):
-        self.liner_square_footage = round(self.__liner_bottom_square_footage() + self.__liner_wall_square_footage())
+        self.liner_square_footage = round(self.liner_bottom_square_footage() + self.liner_wall_square_footage())
 
 
 # Flat sheet liner class
@@ -205,3 +265,12 @@ class FLiner:
     def calculate_five_percent(self):
         scrap_cost = 0
         return self.liner_square_footage * scrap_cost
+
+    # Calculates square footage of liner bottom
+    def liner_bottom_square_footage(self):
+        return self.length_liner * self.width_liner
+
+    @staticmethod
+    # Returns 0 since it's a flat sheet
+    def liner_wall_square_footage(self):
+        return 0
