@@ -5,6 +5,8 @@ from liner import *
 class Accessories:
     def __init__(self):
         self.orders = []
+        self.discount = False
+        self.additional_liners = False
         self.cost = None
         self.weight = None
 
@@ -48,6 +50,11 @@ class Accessories:
         self.orders.append(StainlessClips(area))
         self.__update()
 
+    # Add lifting hem
+    def add_lifting_hem(self, quote):
+        self.orders.append("Lifting hem")
+        quote.lining_system.set_lifting_hem()
+
     # Add installation package
     def add_installation_package(self, is_inside_usa, is_within_600_miles, traveling_cost, lining_system):
         self.orders.append(InstallationPackage(is_inside_usa, is_within_600_miles, traveling_cost, lining_system))
@@ -77,6 +84,16 @@ class Accessories:
     def add_column(self, square_footage, square_footage_price):
         self.orders.append(Column(square_footage, square_footage_price))
         self.__update()
+
+    # Add liner
+    def add_liner(self, quote, added_liners):
+        quote.lining_system.add_liners(added_liners)
+        self.additional_liners = True
+
+    # Discounts liner
+    def discount_liner(self, quote, discount_percentage):
+        quote.lining_system.discount_liner(discount_percentage)
+        self.discount = True
 
     # Finds total cost of argument item
     def find_total_cost_of(self, item):

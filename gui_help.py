@@ -262,8 +262,9 @@ class GuiHelp:
                                  key="customizations")],
                   [sg.Text(size=(40, 2))],
                   [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))]]
-        order_list = []
-        for order in order_list:
+        # TODO - Figure out how to display discount and additional liners
+        # TODO - make it possible to get rid of order
+        for order in quote.accessories.orders:
             layout.append(sg.Text(size=(24, 2)), sg.Text(order, size=(10, 3)))
         layout.append([[sg.Text(size=(40, 2))],
                    [sg.Text(size=(40, 2))],
@@ -291,9 +292,12 @@ class GuiHelp:
             if event == sg.WINDOW_CLOSED:
                 return True
             # Fill in for customizations
-            if event == "Next":
-
+            if event == "Choose":
+                print(values["customizations"])
                 return False
 
             if event == "Back":
+                return True
+
+            if event == "Finish":
                 return True
