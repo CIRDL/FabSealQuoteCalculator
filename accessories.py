@@ -214,7 +214,7 @@ class JBolts:
 
     @staticmethod
     # Calculates number of jbolts
-    def __calculates_jbolt_number( area):
+    def __calculate_jbolt_number(area):
         return math.ceil(area / 1.5)
 
     # Configures cost for jbolts

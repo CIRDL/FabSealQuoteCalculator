@@ -367,46 +367,11 @@ class GuiHelp:
             exit_d = self.create_circular_geo_customization_window(quote)
         elif self.customization == "batten strips":
             exit_d = self.create_circular_batten_strips_customization_window(quote)
+        elif self.customization == "j-bolts":
+            exit_d = self.create_circular_j_bolts_customization_window(quote)
+        elif self.customization == "oarlocks":
+            exit_d = self.create_circular_oarlocks_customization_window(quote)
         return exit_d
-
-    # Circular batten strip customization window
-    def create_circular_batten_strips_customization_window(self, quote):
-        layout = [[sg.Text("Choose batten strip type: ")],
-                  [sg.InputCombo(("Poly-pro", "Stainless Steel"), enable_events=True, size=(18, 2), key="bs_type")],
-                  [sg.Text(size=(40, 2))],
-                  [sg.Text(size=(40, 2))],
-                  [sg.Text(size=(40, 2))],
-                  [sg.Text(size=(40, 2))],
-                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
-
-        window = sg.Window("Quote Customizations", layout)
-
-        # Event reader
-        exit_d = self.circular_batten_strips_customization_event_reader(window, quote)
-
-        # Close window
-        window.close()
-
-        # Return true if closed or back, false if add or delete
-        return exit_d
-
-    # Event reader for batten strip customizations
-    def circular_batten_strips_customization_event_reader(self, window, quote):
-        while True:
-            event, values = window.read()
-            if event == sg.WINDOW_CLOSED:
-                self.exit = True
-                return True
-            if event == "Add":
-                batten_strip_type = values["bs_type"]
-                quote.accessories.add_batten_strip(batten_strip_type,
-                                                   quote.lining_system.liner.info.circumference_liner)
-                return False
-            if event == "Back":
-                return True
-            if event == "Delete":
-                quote.accessories.delete(BattenStrips(0))
-                return False
 
     # Circular geo customization window
     def create_circular_geo_customization_window(self, quote):
@@ -447,3 +412,87 @@ class GuiHelp:
             if event == "Delete":
                 quote.accessories.delete(Geo(0, 0, 0))
                 return False
+
+    # Circular batten strip customization window
+    def create_circular_batten_strips_customization_window(self, quote):
+        layout = [[sg.Text("Choose batten strip type: ")],
+                  [sg.InputCombo(("Poly-pro", "Stainless Steel"), enable_events=True, size=(18, 2), key="bs_type")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.circular_batten_strips_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for batten strip customizations
+    def circular_batten_strips_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                batten_strip_type = values["bs_type"]
+                quote.accessories.add_batten_strip(batten_strip_type,
+                                                   quote.lining_system.liner.info.circumference_liner)
+                return False
+            if event == "Back":
+                return True
+            if event == "Delete":
+                quote.accessories.delete(BattenStrips(0))
+                return False
+
+    @staticmethod
+    # Circular batten strip customization window
+    def create_circular_j_bolts_customization_window(quote):
+        quote.accessories.add_j_bolts(quote.lining_system.liner.info.circumference_liner)
+        return False
+
+    # Circular oarlocks customization window
+    def create_circular_oarlocks_customization_window(self, quote):
+        layout = [[sg.Text("How many oarlocks would you like to add: ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="oarlocks_number")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.circular_oarlocks_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for batten strip customizations
+    def circular_oarlocks_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                oarlocks_number = int(values["oarlocks_number"])
+                quote.accessories.add_oarlocks(oarlocks_number)
+                return False
+            if event == "Back":
+                return True
+            if event == "Delete":
+                quote.accessories.delete(Oarlocks(0))
+                return False
+
