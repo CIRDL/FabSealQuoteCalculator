@@ -28,6 +28,7 @@ class GuiHelp:
     def __init__(self):
         self.create_theme()
         self.customization = None
+        self.exit = False
 
     @staticmethod
     def create_theme():
@@ -60,12 +61,12 @@ class GuiHelp:
         # Return true if closed, false otherwise
         return exit_a
 
-    @staticmethod
     # First window event reader
-    def first_window_event_reader(setup_window, quote):
+    def first_window_event_reader(self, setup_window, quote):
         while True:
             event, values = setup_window.read()
             if event == sg.WINDOW_CLOSED:
+                self.exit = True
                 return True
             if event == "Next":
                 tank = values["tank_type"].lower()
@@ -114,13 +115,13 @@ class GuiHelp:
         # Return true if closed or back, false otherwise
         return exit_b
 
-    @staticmethod
     # Circular configuration event reader
-    def circular_config_event_reader(window, quote):
+    def circular_config_event_reader(self, window, quote):
         # Capture values after next button is pushed
         while True:
             event, values = window.read()
             if event == sg.WINDOW_CLOSED:
+                self.exit = True
                 return True
             if event == "Next":
                 diameter_ft = float(values["tank_dm_ft"])
@@ -165,13 +166,13 @@ class GuiHelp:
         # Return true if closed or back, false otherwise
         return exit_b
 
-    @staticmethod
     # Rectangular configuration event reader
-    def rectangular_config_event_reader(window, quote):
+    def rectangular_config_event_reader(self, window, quote):
         # Capture values after next button is pushed
         while True:
             event, values = window.read()
             if event == sg.WINDOW_CLOSED:
+                self.exit = True
                 return True
             if event == "Next":
                 length_ft = float(values["tank_lgth_ft"])
@@ -213,13 +214,13 @@ class GuiHelp:
         # Return true if closed or back, false otherwise
         return exit_b
 
-    @staticmethod
     # Event reader
-    def flat_sheet_config_event_reader(window, quote):
+    def flat_sheet_config_event_reader(self, window, quote):
         # Capture values after next button is pushed
         while True:
             event, values = window.read()
             if event == sg.WINDOW_CLOSED:
+                self.exit = True
                 return True
             if event == "Next":
                 length_ft = float(values["tank_lgth_ft"])
@@ -308,7 +309,6 @@ class GuiHelp:
         return exit_c
 
     # Creates circular customizations window
-    # TODO - finish customization windows
     def create_circular_customizations_window(self, quote):
         # Customizations available for circular liner
         customizations_available = ["Geo", "Batten Strips", "J-bolts", "Oarlocks",
@@ -322,7 +322,7 @@ class GuiHelp:
                   [sg.Text(size=(40, 2))],
                   [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))]]
         for order in quote.accessories.orders:
-            layout.append([[sg.Text(size=(24, 1)), sg.Text(order.to_string(), size=(10, 1))]])
+            layout.append([sg.Text(order.to_string())])
         layout.append([[sg.Text(size=(40, 2))],
                    [sg.Text(size=(40, 2))],
                    [sg.Button("Back", size=(6, 1)), sg.Text(size=(39, 1)), sg.Button("Choose", size=(6, 1))],
@@ -332,7 +332,7 @@ class GuiHelp:
         window = sg.Window("Quote Customizations", layout)
 
         # Event reader
-        exit_c = self.customizations_event_reader(window, quote)
+        exit_c = self.customizations_event_reader(window)
 
         # Close window
         window.close()
@@ -341,11 +341,12 @@ class GuiHelp:
         return exit_c
 
     # Event reader
-    def customizations_event_reader(self, window, quote):
+    def customizations_event_reader(self, window):
         # Capture values after next button is pushed
         while True:
             event, values = window.read()
             if event == sg.WINDOW_CLOSED:
+                self.exit = True
                 return True
             if event == "Choose":
                 self.customization = values["customizations"].lower()
@@ -364,8 +365,48 @@ class GuiHelp:
     def choose_circular_customization_window(self, quote):
         if self.customization == "geo":
             exit_d = self.create_circular_geo_customization_window(quote)
-
+        elif self.customization == "batten strips":
+            exit_d = self.create_circular_batten_strips_customization_window(quote)
         return exit_d
+
+    # Circular batten strip customization window
+    def create_circular_batten_strips_customization_window(self, quote):
+        layout = [[sg.Text("Choose batten strip type: ")],
+                  [sg.InputCombo(("Poly-pro", "Stainless Steel"), enable_events=True, size=(18, 2), key="bs_type")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.circular_batten_strips_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for batten strip customizations
+    def circular_batten_strips_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                batten_strip_type = values["bs_type"]
+                quote.accessories.add_batten_strip(batten_strip_type,
+                                                   quote.lining_system.liner.info.circumference_liner)
+                return False
+            if event == "Back":
+                return True
+            if event == "Delete":
+                quote.accessories.delete(BattenStrips(0))
+                return False
 
     # Circular geo customization window
     def create_circular_geo_customization_window(self, quote):
@@ -377,8 +418,7 @@ class GuiHelp:
                   [sg.Text(size=(40, 2))],
                   [sg.Text(size=(40, 2))],
                   [sg.Text(size=(40, 2))],
-                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))],
-                  [sg.Text(size=(18, 1)), sg.Button("Delete", size=(6, 1)), sg.Text(size=(16, 1))]]
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
 
         window = sg.Window("Quote Customizations", layout)
 
@@ -391,22 +431,19 @@ class GuiHelp:
         # Return true if closed or back, false if add or delete
         return exit_d
 
-    @staticmethod
     # Event reader for geo customizations
-    def circular_geo_customization_event_reader(window, quote):
+    def circular_geo_customization_event_reader(self, window, quote):
         while True:
             event, values = window.read()
             if event == sg.WINDOW_CLOSED:
+                self.exit = True
                 return True
-
             if event == "Add":
                 wall_thickness = int(values["geo_size"])
                 quote.accessories.add_geo(wall_thickness, quote)
                 return False
-
             if event == "Back":
                 return True
-
             if event == "Delete":
                 quote.accessories.delete(Geo(0, 0, 0))
                 return False

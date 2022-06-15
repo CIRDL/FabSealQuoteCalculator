@@ -197,7 +197,7 @@ class BattenStrips:
             return 33.30
 
     # Calculates batten strip cost
-    def ___calculate_cost(self, area):
+    def __calculate_cost(self, area):
         return round(area * self.price_per_unit, 2)
 
     @staticmethod
@@ -218,7 +218,7 @@ class JBolts:
         return math.ceil(area / 1.5)
 
     # Configures cost for jbolts
-    def __calculate_cost(self, area):
+    def __calculate_cost(self):
         return round(self.jbolt_cost * self.jbolt_number, 2)
 
     @staticmethod

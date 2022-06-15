@@ -23,7 +23,7 @@ quote = Quote()
 exit_a = False
 
 # Creates loop to allow for back button
-while not exit_a:
+while not exit_a and not gui.exit:
 
     # Creates first window for liner setup
     exit_a = gui.create_first_window(quote)
@@ -36,7 +36,7 @@ while not exit_a:
     exit_b = False
 
     # Loop for back button
-    while not exit_b:
+    while not exit_b and not gui.exit:
 
         # Creates second window for liner customizations
         exit_b = gui.create_second_window(quote)
@@ -52,7 +52,7 @@ while not exit_a:
         exit_c = False
 
         # Loop for back button
-        while not exit_c:
+        while not exit_c and not gui.exit:
 
             # Creates third window for quote customizations
             exit_c = gui.create_third_window(quote)

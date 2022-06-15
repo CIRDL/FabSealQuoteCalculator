@@ -8,9 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/accessories.py" beforeDir="false" afterPath="$PROJECT_DIR$/accessories.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui_help.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui_help.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/liner.py" beforeDir="false" afterPath="$PROJECT_DIR$/liner.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_gui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/quote.py" beforeDir="false" afterPath="$PROJECT_DIR$/quote.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,9 +36,6 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/main.py" root0="SKIP_INSPECTION" />
-  </component>
-  <component name="ProblemsViewState">
-    <option name="selectedIndex" value="1" />
   </component>
   <component name="ProjectId" id="1mhqcQuJQ6ypYWwb7NgbwMzpWHx" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
