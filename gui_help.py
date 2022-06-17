@@ -314,7 +314,7 @@ class GuiHelp:
         customizations_available = ["Geo", "Batten Strips", "J-bolts", "Oarlocks",
                                     "Crate", "Leak Detection", "Nailing Strips", "Stainless Clips",
                                     "Lifting Hem", "Installation", "Boots", "Sumps", "Manways",
-                                    "Center poles", "Columns", "Add liner", "Discount liner"]
+                                    "Center poles", "Columns", "Add liner(s)", "Discount liner"]
         # Set the layout for customization loop
         layout = [[sg.Text("Choose a customization below:")],
                   [sg.InputCombo(customizations_available, size=(40, 1), enable_events=True,
@@ -322,8 +322,13 @@ class GuiHelp:
                   [sg.Text(size=(40, 2))],
                   [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))]]
         for order in quote.accessories.orders:
-            if order == "Lifting hem":
-                layout.append([sg.Button("Lifting hem")])
+            if isinstance(order, type("")):
+                if order[0].lower() == "l":
+                    layout.append([sg.Button("Lifting hem")])
+                elif order[0].lower() == "a":
+                    layout.append([sg.Button(order)])
+                elif order[0].lower() == "d":
+                    layout.append([sg.Button(order)])
             else:
                 layout.append([sg.Button(order.to_string())])
         layout.append([[sg.Text(size=(40, 2))],
@@ -357,6 +362,7 @@ class GuiHelp:
             if event == "Back":
                 return True
             if event == "Finish":
+                self.exit = True
                 return True
 
     # Updates dashboard of customizations window
@@ -384,7 +390,6 @@ class GuiHelp:
             exit_d = self.create_stainless_clips_customization_window(quote)
         elif self.customization == "lifting hem":
             exit_d = self.create_lifting_hem_customization_window(quote)
-        # TODO - fix me
         elif self.customization == "installation":
             exit_d = self.create_circular_installation_package_customization_window(quote)
         elif self.customization == "boots":
@@ -397,7 +402,7 @@ class GuiHelp:
             exit_d = self.create_center_pole_customization_window(quote)
         elif self.customization == "columns":
             exit_d = self.create_column_customization_window(quote)
-        elif self.customization == "add liner":
+        elif self.customization == "add liner(s)":
             exit_d = self.create_add_liner_customization_window(quote)
         elif self.customization == "discount liner":
             exit_d = self.create_discount_liner_customization_window(quote)
@@ -405,23 +410,40 @@ class GuiHelp:
 
     # Discount liner customization window
     def create_discount_liner_customization_window(self, quote):
-        exit_d = self.discount_liner_customization_event_reader(quote)
+        # Set the layout for discount liner customization
+        layout = [[sg.Text("Enter discount percentage for liner: ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="discount_percentage"), sg.Text("%")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
 
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.discount_liner_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
         return exit_d
 
     # Event reader for manway customization window
-    def discount_liner_customization_event_reader(self, quote):
-        return 0
-
-    # Add liner customization window
-    def create_add_liner_customization_window(self, quote):
-        exit_d = self.add_liner_customization_event_reader(quote)
-
-        return exit_d
-
-    # Event reader for add liner customization window
-    def add_liner_customization_event_reader(self, quote):
-        return 0
+    def discount_liner_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                discount_percentage = int(values["discount_percentage"])
+                quote.accessories.discount_liner(quote, discount_percentage)
+                return False
+            if event == "Back":
+                return True
 
     # Circular geo customization window
     def create_circular_geo_customization_window(self, quote):
@@ -979,3 +1001,40 @@ class GuiHelp:
             if event == "Delete":
                 quote.accessories.delete(Column(0, 0))
                 return False
+
+    # Add liner customization window
+    def create_add_liner_customization_window(self, quote):
+        # Set the layout for liner addition customization
+        layout = [[sg.Text("How many liners would you like to add? ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="additional_liners")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.add_liner_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for add liner customization window
+    def add_liner_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                additional_liners = int(values["additional_liners"])
+                quote.accessories.add_liners(quote, additional_liners)
+                return False
+            if event == "Back":
+                return True

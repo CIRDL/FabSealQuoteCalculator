@@ -87,13 +87,15 @@ class Accessories:
         self.__update()
 
     # Add liner
-    def add_liner(self, quote, added_liners):
+    def add_liners(self, quote, added_liners):
         quote.lining_system.add_liners(added_liners)
+        self.orders.append(f"Additional Liners ({added_liners})")
         self.additional_liners = True
 
     # Discounts liner
     def discount_liner(self, quote, discount_percentage):
         quote.lining_system.discount_liner(discount_percentage)
+        self.orders.append(f"Discount ({discount_percentage}%)")
         self.discount = True
 
     # Finds total cost of argument item

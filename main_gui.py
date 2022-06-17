@@ -4,7 +4,6 @@
 
 
 from gui_help import *
-from error import *
 import docx
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.enum.text import WD_LINE_SPACING
@@ -63,3 +62,4 @@ while not exit_a and not gui.exit:
 
             # Updates dashboard of quote
             gui.update(quote)
+
