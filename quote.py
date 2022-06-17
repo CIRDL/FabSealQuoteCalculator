@@ -6,4 +6,3 @@ class Quote:
     def __init__(self):
         self.lining_system = LiningSystem()
         self.accessories = Accessories()
-

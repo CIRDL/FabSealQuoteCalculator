@@ -9,6 +9,16 @@ def converter(feet, inches):
     return total_converted
 
 
+# Converts from double to imperial measurements & returns feet
+def feet_deconverter(converted_val):
+    return math.floor(converted_val)
+
+
+# Converts from double to imperial measurements & returns inches
+def inch_deconverter(converted_val):
+    return (converted_val - feet_deconverter(converted_val)) * 12
+
+
 # Adds appropriate number of extra length to diameter
 def diameter_modifier(diameter):
     if diameter < 15:
