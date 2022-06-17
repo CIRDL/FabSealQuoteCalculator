@@ -107,15 +107,19 @@ class Accessories:
     # Deletes argument item if found
     def delete(self, item):
         for order in self.orders:
-            if isinstance(order, item):
+            if isinstance(order, item) and not isinstance(order, ""):
                 self.orders.remove(order)
                 break
+            elif order == "Lifting hem":
+                self.orders.remove(order)
         self.__update()
 
     # Sets cost of accessories
     def __set_cost(self):
         self.cost = 0
         for order in self.orders:
+            if isinstance(order, type("")):
+                continue
             self.cost += order.cost
 
     # Sets weight of accessories
@@ -231,7 +235,7 @@ class Oarlocks:
     def __init__(self, oarlocks_number):
         self.oarlock_price = 9.00
         self.oarlocks_number = oarlocks_number
-        self.oarlocks_cost = self.__calculate_cost()
+        self.cost = self.__calculate_cost()
 
     # Configures cost for oarlocks
     def __calculate_cost(self):
@@ -270,7 +274,7 @@ class Crate:
             return 0
 
     def to_string(self):
-        return f"{self.size} Crate"
+        return f"Crate ({self.size})"
 
 
 # Leak Detection class
@@ -310,7 +314,7 @@ class StainlessClips:
         self.cost = self.__calculate_cost(area)
 
     # Configures cost of stainless clips
-    def __calculates_cost(self, area):
+    def __calculate_cost(self, area):
         return math.ceil(self.price_per_unit * area)
 
     @staticmethod
@@ -323,7 +327,7 @@ class InstallationPackage:
     def __init__(self, is_inside_usa, is_within_600_miles, traveling_cost, lining_system):
         self.site_survey_cost = self.__calculate_site_survey_cost(is_inside_usa.lower(), is_within_600_miles.lower())
         self.traveling_cost = traveling_cost
-        self.tools_and_hardware = lining_system.liner_cost * 0.1
+        self.tools_and_hardware = lining_system.liner.cost * 0.1
         self.total_tools_and_hardware = self.tools_and_hardware * lining_system.total_liners
         self.install_cost = self.__calculate_install_cost(lining_system)
         self.cost = self.__calculate_cost()
@@ -401,7 +405,7 @@ class InstallationPackage:
 class Boot:
     def __init__(self, size):
         self.size = size
-        self.cost = self.__calculate_cost
+        self.cost = self.__calculate_cost()
 
     # Calculates cost of boot
     def __calculate_cost(self):
@@ -419,6 +423,7 @@ class Boot:
 # General material customization class
 class GeneralCustomization:
     def __init__(self, square_footage, square_footage_price):
+        self.square_footage = square_footage
         self.labor_cost = 250
         self.cost = self.__calculate_cost(square_footage, square_footage_price)
 
@@ -432,9 +437,8 @@ class Sump(GeneralCustomization):
     def __init__(self, square_footage, square_footage_price):
         super().__init__(square_footage, square_footage_price)
 
-    @staticmethod
-    def to_string():
-        return "Sump"
+    def to_string(self):
+        return f"Sump ({self.square_footage}\")"
 
 
 # ManWay class
@@ -442,9 +446,8 @@ class ManWay(GeneralCustomization):
     def __init__(self, square_footage, square_footage_price):
         super().__init__(square_footage, square_footage_price)
 
-    @staticmethod
-    def to_string():
-        return "Manway"
+    def to_string(self):
+        return f"Manway ({self.square_footage}\")"
 
 
 # Center Pole class
@@ -452,9 +455,8 @@ class CenterPole(GeneralCustomization):
     def __init__(self, square_footage, square_footage_price):
         super().__init__(square_footage, square_footage_price)
 
-    @staticmethod
-    def to_string():
-        return "Center Pole"
+    def to_string(self):
+        return f"Center Pole ({self.square_footage}\")"
 
 
 # Column class
@@ -462,6 +464,5 @@ class Column(GeneralCustomization):
     def __init__(self, square_footage, square_footage_price):
         super().__init__(square_footage, square_footage_price)
 
-    @staticmethod
-    def to_string():
-        return "Column"
+    def to_string(self):
+        return f"Column ({self.square_footage}\")"

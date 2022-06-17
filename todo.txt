@@ -1,6 +1,75 @@
+TODO - figure out how to properly exit out of installation package window
+
+
 TODO - take off delete of first time insertion
 
 Rather, previous orders into button you can choose and then delete
 
 Code for delete button:
 [sg.Text(size=(18, 1)), sg.Button("Delete", size=(6, 1)), sg.Text(size=(16, 1))]]
+
+
+TODO - Change cost for installation
+    # Displays standard installation cost & asks user if they want to change it
+    def installation_standard_cost_window(self, installation_obj):
+        layout = [[sg.Text("Cost of standard installation: $", installation_obj.cost)],
+                  [sg.Text("Would you like to change cost?")],
+                  [sg.InputCombo("Yes", "No", enable_events=True, key="customized_install_cost", size=(5, 1))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Next", size=(6, 1))]]
+
+        window2 = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        while True:
+            event, values = window2.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Next":
+                if values["customized_install_cost"].lower()[0] == "y":
+                    customized_installation_cost = self.installation_standard_cost_customization_window()
+                    if isinstance(customized_installation_cost, float):
+                        installation_obj.install_cost = customized_installation_cost
+                else:
+                    return False
+            if event == "Back":
+                return True
+
+        # Close window
+        window2.close()
+
+        # Return true if closed or back, traveling cost float if otherwise
+        return customized_installation_cost
+
+    # Asks for site survey cost in the case that project is outside of USA
+    def installation_standard_cost_customization_window(self):
+        layout = [[sg.Text("Enter installation cost: ")],
+                  [sg.Text("$"), sg.InputText(enable_events=True, key="install_cost", size=(10, 1))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Next", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Next":
+                install_cost = float(values["install_cost"])
+            if event == "Back":
+                return True
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, traveling cost float if otherwise
+        return install_cost

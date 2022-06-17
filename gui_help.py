@@ -312,9 +312,9 @@ class GuiHelp:
     def create_circular_customizations_window(self, quote):
         # Customizations available for circular liner
         customizations_available = ["Geo", "Batten Strips", "J-bolts", "Oarlocks",
-                                    "Crate(s)", "Leak Detection", "Nailing Strip", "Stainless Clips",
+                                    "Crate", "Leak Detection", "Nailing Strips", "Stainless Clips",
                                     "Lifting Hem", "Installation", "Boots", "Sumps", "Manways",
-                                    "Center poles", "Columns", "Add liner(s)", "Discount liner"]
+                                    "Center poles", "Columns", "Add liner", "Discount liner"]
         # Set the layout for customization loop
         layout = [[sg.Text("Choose a customization below:")],
                   [sg.InputCombo(customizations_available, size=(40, 1), enable_events=True,
@@ -322,7 +322,10 @@ class GuiHelp:
                   [sg.Text(size=(40, 2))],
                   [sg.Text(size=(21, 2)), sg.Text("Dashboard:", size=(10, 3))]]
         for order in quote.accessories.orders:
-            layout.append([sg.Text(order.to_string())])
+            if order == "Lifting hem":
+                layout.append([sg.Button("Lifting hem")])
+            else:
+                layout.append([sg.Button(order.to_string())])
         layout.append([[sg.Text(size=(40, 2))],
                    [sg.Text(size=(40, 2))],
                    [sg.Button("Back", size=(6, 1)), sg.Text(size=(39, 1)), sg.Button("Choose", size=(6, 1))],
@@ -371,7 +374,54 @@ class GuiHelp:
             exit_d = self.create_circular_j_bolts_customization_window(quote)
         elif self.customization == "oarlocks":
             exit_d = self.create_circular_oarlocks_customization_window(quote)
+        elif self.customization == "crate":
+            exit_d = self.create_crate_customization_window(quote)
+        elif self.customization == "leak detection":
+            exit_d = self.create_circular_leak_detection_customization_window(quote)
+        elif self.customization == "nailing strips":
+            exit_d = self.create_nailing_strips_customization_window(quote)
+        elif self.customization == "stainless clips":
+            exit_d = self.create_stainless_clips_customization_window(quote)
+        elif self.customization == "lifting hem":
+            exit_d = self.create_lifting_hem_customization_window(quote)
+        # TODO - fix me
+        elif self.customization == "installation":
+            exit_d = self.create_circular_installation_package_customization_window(quote)
+        elif self.customization == "boots":
+            exit_d = self.create_boot_customization_window(quote)
+        elif self.customization == "sumps":
+            exit_d = self.create_sump_customization_window(quote)
+        elif self.customization == "manways":
+            exit_d = self.create_manway_customization_window(quote)
+        elif self.customization == "center poles":
+            exit_d = self.create_center_pole_customization_window(quote)
+        elif self.customization == "columns":
+            exit_d = self.create_column_customization_window(quote)
+        elif self.customization == "add liner":
+            exit_d = self.create_add_liner_customization_window(quote)
+        elif self.customization == "discount liner":
+            exit_d = self.create_discount_liner_customization_window(quote)
         return exit_d
+
+    # Discount liner customization window
+    def create_discount_liner_customization_window(self, quote):
+        exit_d = self.discount_liner_customization_event_reader(quote)
+
+        return exit_d
+
+    # Event reader for manway customization window
+    def discount_liner_customization_event_reader(self, quote):
+        return 0
+
+    # Add liner customization window
+    def create_add_liner_customization_window(self, quote):
+        exit_d = self.add_liner_customization_event_reader(quote)
+
+        return exit_d
+
+    # Event reader for add liner customization window
+    def add_liner_customization_event_reader(self, quote):
+        return 0
 
     # Circular geo customization window
     def create_circular_geo_customization_window(self, quote):
@@ -496,3 +546,436 @@ class GuiHelp:
                 quote.accessories.delete(Oarlocks(0))
                 return False
 
+    # Crate customization window
+    def create_crate_customization_window(self, quote):
+        # Set the layout for crate customization
+        layout = [[sg.Text("Enter crate size: ")],
+                  [sg.InputCombo(("Small", "Large"), enable_events=True, size=(8, 2), key="crate_size")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text("How many would you like?")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="number_crates")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.crate_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for crate customizations
+    def crate_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                size = values["crate_size"]
+                number_crates = int(values["number_crates"])
+                for i in range(number_crates):
+                    quote.accessories.add_crate(size)
+                return False
+            if event == "Back":
+                return True
+            if event == "Delete":
+                quote.accessories.delete(Crate("Default"))
+                return False
+
+    @staticmethod
+    # Circular leak detection customization window
+    def create_circular_leak_detection_customization_window(quote):
+        quote.accessories.add_leak_detection(quote.lining_system.liner.info.circumference_liner)
+        return False
+
+    @staticmethod
+    # Circular nailing strip customization window
+    def create_nailing_strips_customization_window(quote):
+        quote.accessories.add_nailing_strips(quote.lining_system.liner.info.circumference_liner)
+        return False
+
+    @staticmethod
+    # Circular stainless2 clips customization window
+    def create_stainless_clips_customization_window(quote):
+        quote.accessories.add_stainless_clips(quote.lining_system.liner.info.circumference_liner)
+        return False
+
+    @staticmethod
+    # Circular lifting hem customization window
+    def create_lifting_hem_customization_window(quote):
+        quote.accessories.add_lifting_hem(quote)
+        return False
+
+    # Circular installation customization window
+    def create_circular_installation_package_customization_window(self, quote):
+        # Set the layout for installation customization
+        layout = [[sg.Text("Is the site survey within the US? ")],
+                  [sg.InputCombo(("Yes", "No"), enable_events=True, size=(4, 2), key="within_USA")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Next", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.circular_installation_package_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for installation package customizations
+    def circular_installation_package_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Next":
+                within_usa = values["within_USA"].lower()
+                customized_site_survey = False
+                if within_usa[0] == "y":
+                    # Returns True if exit or back, yes and no to answer question otherwise
+                    is_within_600_miles = self.circular_installation_within_usa_window()
+                    if isinstance(is_within_600_miles, bool):
+                        return True
+                else:
+                    is_within_600_miles = "no"
+                    customized_site_survey = True
+                    # Returns True if exit or back, float otherwise
+                    site_survey_cost = self.installation_site_survey_cost_window()
+                # Returns True if exit or back, float otherwise
+                traveling_cost = self.circular_installation_traveling_cost_window()
+                if isinstance(traveling_cost, bool):
+                    return True
+                quote.accessories.add_installation_package(within_usa, is_within_600_miles, traveling_cost,
+                                                           quote.lining_system)
+                if customized_site_survey:
+                    quote.accessories.orders[len(quote.accessories.orders) - 1].set_site_survey_cost(site_survey_cost)
+                return False
+            if event == "Back":
+                return True
+
+    # Circular installation within USA customization window
+    def circular_installation_within_usa_window(self):
+        layout = [[sg.Text("Is the site survey within 600 miles? ")],
+                  [sg.InputCombo(("Yes", "No"), enable_events=True, size=(4, 2), key="within_600")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Next", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.circular_installation_within_usa_event_reader(window)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for installation package customizations
+    def circular_installation_within_usa_event_reader(self, window):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Next":
+                within_usa = values["within_600"].lower()
+                if within_usa[0] == "y":
+                    return "yes"
+                else:
+                    return "no"
+            if event == "Back":
+                return True
+
+    # Asks for site survey cost in the case that project is outside of USA
+    def installation_site_survey_cost_window(self):
+        layout = [[sg.Text("Enter cost of site survey: ")],
+                  [sg.Text("$"), sg.InputText(enable_events=True, key="site_survey_cost", size=(10, 1))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Next", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        site_survey_cost = self.installation_site_survey_event_reader(window)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, traveling cost float if otherwise
+        return site_survey_cost
+
+    # Event reader for customized site survey
+    def installation_site_survey_event_reader(self, window):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Next":
+                return float(values["site_survey_cost"])
+            if event == "Back":
+                return True
+
+    # Circular installation within USA customization window
+    def circular_installation_traveling_cost_window(self):
+        layout = [[sg.Text("Enter cost of traveling: ")],
+                  [sg.Text("$"), sg.InputText(enable_events=True, key="traveling_cost", size=(10, 1))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Next", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        traveling_cost = self.circular_installation_traveling_cost_event_reader(window)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, traveling cost float if otherwise
+        return traveling_cost
+
+    # Event reader for installation package customizations
+    def circular_installation_traveling_cost_event_reader(self, window):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Next":
+                return float(values["traveling_cost"])
+            if event == "Back":
+                return True
+
+    # Boots customization window
+    def create_boot_customization_window(self, quote):
+        layout = [[sg.Text("Enter boot size in inches: ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="boot_size")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text("How many would you like? ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="number_boots")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.boot_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for batten strip customizations
+    def boot_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                boot_size = float(values["boot_size"])
+                number_boots = int(values["number_boots"])
+                for i in range(number_boots):
+                    quote.accessories.add_boot(boot_size)
+                return False
+            if event == "Back":
+                return True
+            if event == "Delete":
+                quote.accessories.delete(Boot(0))
+                return False
+
+    # Sump customization window
+    def create_sump_customization_window(self, quote):
+        layout = [[sg.Text("Enter square footage of material used for sump: ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="square_footage")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text("How many would you like? ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="number_sumps")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.sump_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for sump customization window
+    def sump_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                square_footage = float(values["square_footage"])
+                number_sumps = int(values["number_sumps"])
+                for i in range(number_sumps):
+                    quote.accessories.add_sump(square_footage, quote.lining_system.liner.sq_price)
+                return False
+            if event == "Back":
+                return True
+            if event == "Delete":
+                quote.accessories.delete(Sump(0, 0))
+                return False
+
+    # Manway customization window
+    def create_manway_customization_window(self, quote):
+        layout = [[sg.Text("Enter square footage of material used for manway: ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="square_footage")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text("How many would you like? ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="number_manways")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.manway_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for manway customization window
+    def manway_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                square_footage = float(values["square_footage"])
+                number_manways = int(values["number_manways"])
+                for i in range(number_manways):
+                    quote.accessories.add_manway(square_footage, quote.lining_system.liner.sq_price)
+                return False
+            if event == "Back":
+                return True
+            if event == "Delete":
+                quote.accessories.delete(ManWay(0, 0))
+                return False
+
+    # Center pole customization window
+    def create_center_pole_customization_window(self, quote):
+        layout = [[sg.Text("Enter square footage of material used for center pole: ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="square_footage")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text("How many would you like? ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="number_center_poles")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.center_pole_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for center pole customization window
+    def center_pole_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                square_footage = float(values["square_footage"])
+                number_center_poles = int(values["number_center_poles"])
+                for i in range(number_center_poles):
+                    quote.accessories.add_center_pole(square_footage, quote.lining_system.liner.sq_price)
+                return False
+            if event == "Back":
+                return True
+            if event == "Delete":
+                quote.accessories.delete(CenterPole(0, 0))
+                return False
+
+    # Column customization window
+    def create_column_customization_window(self, quote):
+        layout = [[sg.Text("Enter square footage of material used for column: ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="square_footage")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text("How many would you like? ")],
+                  [sg.InputText(enable_events=True, size=(6, 2), key="number_columns")],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Text(size=(40, 2))],
+                  [sg.Button("Back", size=(4, 1)), sg.Text(size=(31, 1)), sg.Button("Add", size=(6, 1))]]
+
+        window = sg.Window("Quote Customizations", layout)
+
+        # Event reader
+        exit_d = self.column_customization_event_reader(window, quote)
+
+        # Close window
+        window.close()
+
+        # Return true if closed or back, false if add or delete
+        return exit_d
+
+    # Event reader for column customization window
+    def column_customization_event_reader(self, window, quote):
+        while True:
+            event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                self.exit = True
+                return True
+            if event == "Add":
+                square_footage = float(values["square_footage"])
+                number_columns = int(values["number_columns"])
+                for i in range(number_columns):
+                    quote.accessories.add_column(square_footage, quote.lining_system.liner.sq_price)
+                return False
+            if event == "Back":
+                return True
+            if event == "Delete":
+                quote.accessories.delete(Column(0, 0))
+                return False
