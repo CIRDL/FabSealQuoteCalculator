@@ -340,7 +340,7 @@ class GuiHelp:
         window = sg.Window("Quote Customizations", layout)
 
         # Event reader
-        exit_c = self.customizations_event_reader(window)
+        exit_c = self.customizations_event_reader(window, quote)
 
         # Close window
         window.close()
@@ -349,7 +349,7 @@ class GuiHelp:
         return exit_c
 
     # Event reader
-    def customizations_event_reader(self, window):
+    def customizations_event_reader(self, window, quote):
         # Capture values after next button is pushed
         while True:
             event, values = window.read()
@@ -360,6 +360,7 @@ class GuiHelp:
                 self.customization = values["customizations"].lower()
                 return False
             if event == "Back":
+                quote.accessories.orders.clear()
                 return True
             if event == "Finish":
                 self.exit = True

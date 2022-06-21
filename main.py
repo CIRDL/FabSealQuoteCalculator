@@ -69,7 +69,8 @@ doc.create_header()
 # Creates body
 doc.create_general_body()
 
-
+# Creates calculations body
+doc.create_calculations_body()
 
 # Saves document and terminates program
 doc.save()

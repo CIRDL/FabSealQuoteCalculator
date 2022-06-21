@@ -5,15 +5,23 @@ from liner import *
 class Accessories:
     def __init__(self):
         self.orders = []
+        self.geo_layers = 0
+        self.boot_list = []
+        self.sump_list = []
+        self.manway_list = []
+        self.center_pole_list = []
+        self.column_list = []
+        self.crate_list = []
         self.discount = False
         self.additional_liners = False
-        self.cost = None
-        self.weight = None
+        self.cost = 0
+        self.weight = 0
 
     # Add geo
     def add_geo(self, wall_thickness, quote):
         self.orders.append(Geo(wall_thickness, quote.lining_system.liner.info.liner_bottom_square_footage(),
                                quote.lining_system.liner.info.liner_wall_square_footage()))
+        self.geo_layers += 1
         self.__update()
 
     # Add batten strips
@@ -34,6 +42,7 @@ class Accessories:
     # Add crate
     def add_crate(self, size):
         self.orders.append(Crate(size))
+        self.crate_list.append(Crate(size))
         self.__update()
 
     # Add leak detection
@@ -64,26 +73,31 @@ class Accessories:
     # Adds boot
     def add_boot(self, size):
         self.orders.append(Boot(size))
+        self.boot_list.append(Boot(size))
         self.__update()
 
     # Adds sump
     def add_sump(self, square_footage, square_footage_price):
         self.orders.append(Sump(square_footage, square_footage_price))
+        self.sump_list.append(Sump(square_footage, square_footage_price))
         self.__update()
 
     # Adds manway
     def add_manway(self, square_footage, square_footage_price):
         self.orders.append(ManWay(square_footage, square_footage_price))
+        self.manway_list.append(ManWay(square_footage, square_footage_price))
         self.__update()
 
     # Adds center pole
     def add_center_pole(self, square_footage, square_footage_price):
         self.orders.append(CenterPole(square_footage, square_footage_price))
+        self.center_pole_list.append(CenterPole(square_footage, square_footage_price))
         self.__update()
 
     # Adds column
     def add_column(self, square_footage, square_footage_price):
         self.orders.append(Column(square_footage, square_footage_price))
+        self.column_list.append(Column(square_footage, square_footage_price))
         self.__update()
 
     # Add liner
@@ -109,18 +123,21 @@ class Accessories:
     # Deletes argument item if found
     def delete(self, item):
         for order in self.orders:
-            if isinstance(order, item) and not isinstance(order, ""):
+            if isinstance(order, item) and not isinstance(order, "") or isinstance(order, Boot):
                 self.orders.remove(order)
                 break
-            elif order == "Lifting hem":
+            elif order == "Lifting hem" and item == "Lifting hem":
                 self.orders.remove(order)
+            elif isinstance(order, Boot):
+                self.orders.remove(order)
+                self.boot_list.remove(order)
         self.__update()
 
     # Sets cost of accessories
     def __set_cost(self):
         self.cost = 0
         for order in self.orders:
-            if isinstance(order, type("")):
+            if isinstance(order, str):
                 continue
             self.cost += order.cost
 
@@ -140,6 +157,7 @@ class Accessories:
 # Geo class
 class Geo:
     def __init__(self, wall_thickness, bottom_square_footage, wall_square_footage):
+        self.wall_thickness = wall_thickness
         self.wall_sq_price = self.__calculate_wall_sq_price(wall_thickness)
         self.floor_sq_price = 0.59
         self.wall_sq_weight = self.__calculate_wall_sq_weight(wall_thickness)
@@ -297,12 +315,7 @@ class LeakDetection:
 # Nailing Strip class
 class NailingStrip:
     def __init__(self, area):
-        self.price_per_unit = 1.00
-        self.cost = self.__calculate_cost(area)
-
-    # Configures cost of nailing strip
-    def __calculate_cost(self, area):
-        return round(area * self.price_per_unit, 2)
+        self.cost = 150
     
     @staticmethod
     def to_string():

@@ -65,6 +65,7 @@ class Liner:
         self.liner_square_footage = 0
         self.weight = 0
         self.cost = 0
+        self.quote_square_footage = 0
         # Including lifting hem
         self.total_five_percent = 0
         # Including lifting hem
@@ -81,12 +82,13 @@ class Liner:
         self.liner_square_footage = self.info.liner_square_footage
         self.weight = self.__calculate_liner_weight()
         self.cost = self.__calculate_liner_cost()
+        self.quote_square_footage = self.liner_square_footage + self.five_percent
         # Lifting hem
         self.total_five_percent = self.five_percent
         # Lifting hem
         self.total_liner_square_footage = self.liner_square_footage
         # Lifting hem
-        self.total_cost = self.cost
+        self.total_cost = round(self.quote_square_footage * self.sq_price, 2)
         # Lifting hem
         self.total_weight = self.weight
 
@@ -97,6 +99,7 @@ class Liner:
         self.total_five_percent = self.total_liner_square_footage * 0.05
         self.total_cost = self.__calculate_liner_cost()
         self.total_weight = self.__calculate_liner_weight()
+        self.quote_square_footage = self.total_liner_square_footage + self.total_five_percent
 
     # Calculates weight of liner
     def __calculate_liner_weight(self):
