@@ -1040,7 +1040,7 @@ while not satisfied:
         if number_liners > 1:
             original_liners_cost = total_liners * liner_cost
         else:
-            original_liners_cost = liner_costc
+            original_liners_cost = liner_cost
 
         total_quote_cost -= original_liners_cost
 
